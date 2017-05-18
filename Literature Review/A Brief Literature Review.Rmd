@@ -1,0 +1,129 @@
+---
+title: "Literature Review"
+
+documentclass: "elsarticle"
+
+Author1: "Fiona Ganie"  
+Ref1: "University of Cape Town" 
+Email1: "GNXFIO001\\@myuct.ac.za" 
+
+BottomRFooter: "\\footnotesize Page \\thepage\\" 
+addtoprule: TRUE
+addfootrule: TRUE 
+bibliography: Tex/ref.bib  
+RemovePreprintSubmittedTo: TRUE
+
+toc: no                        
+numbersections: yes             
+
+fontsize: 12pt                  
+linestretch: 1.5                
+link-citations: TRUE          
+
+output:
+  pdf_document:
+    keep_tex: TRUE
+    template: Tex/TexDefault.txt
+    fig_width: 3.5 
+    fig_height: 3.5
+    include:
+      in_header: Tex/packages.txt 
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 6, fig.height = 5, fig.pos="H", fig.pos = 'H')
+
+```
+
+# Introduction \label{Introduction}
+
+Forecasting is a core element of the processes of a business. Producing forecasts of high quality is essential as they play an important role in inventory control, purchasing decisions of new equipment and investment decisions, and are needed for effective planning [@granvik2010forecasting]. Automatic forecasting techniques have commonly been used in business to produce a wide variety of forecasts and are a useful tool for producing a large number of forecasts. Automatic techniques can be used by non-experts without training in the use of time series [@hyndman2007automatic]. Automatic forecasting algorithms must have the ability to select the appropriate model for forecasting and estimate model parameters, without the need for human intervention [@hyndman2007automatic]. The most common automatic forecasting techniques used are the ARIMA and Exponential Smoothing (ETS) models. ETS models have been used extensively in forecasting demand for inventories [@billah2006exponential]. They have performed well in forecasting competitions against more complex models and are particularly good at forecasting seasonal data over short horizons [@hyndman2002state]. 
+
+Automatic forecasting techniques can be too inflexible and do not allow for analysts with specialized knowledge to incorporate their expertise into the model effectively. This leads to difficulties in producing forecasts of high quality, thus the demand for high quality forecasts far exceeds the rate at which they are produced [@taylor2017forecasting]. In December 2016, Facebook released their forecasting model, Prophet. According to @taylor2017forecasting, Prophet is a flexible model that can be adjusted by a large number of non-experts who have little knowledge about time series, however have expert knowledge on the data-generating process. Prophet allows for a large number of forecasts to be produced across a variety of problems and consists of a robust evaluation system that allows for a large number of forecasts be evaluated and compared. This is Facebook’s definition of forecasting at scale, and provides a solution to the problems that automatic forecasting pose [@taylor2017forecasting].
+
+# Exponential State Space Models \label{Exponential State Space Models}
+
+## Exponential Smoothing Methods 
+ETS methods originated in the 1950’s and is the key work of Brown , Holt, and Winters [@de200625]. It has been widely used for many applications in industry and has been the foundation of many successful forecasting methods [@de200625]. Exponential smoothing techniques produce forecasts by calculating them as a weighted average of past observations. Observations that are most recent are more heavily weighted, with these weights decaying exponentially as the observations get older. 
+
+Exponential smoothing methods were originally classified by Pegel according to the components present in the time series (trend and seasonality), and whether they were additive or multiplicative in nature [@de200625]. Gardner and Taylor further extended this classification to include a damped additive and multiplicative trend respectively [@de200625]. A taxonomy of exponential smoothing methods was later created by Hyndman et al. and extended by Taylor [@de200625]. It considered all possible combinations of the trend and seasonality components thus producing 15 methods of exponential smoothing as seen in table \ref{tab1}.
+
+
+```{r ShortTable, results = 'asis'}
+
+library(xtable)
+
+WD <- getwd()
+data <- read.csv( file.path(WD, "Data/ETSMethods.csv"), header=TRUE, sep=" ", check.names=FALSE)
+
+table <- xtable(data, caption = "Taxonomy of Exponential Smoothing Methods \\label{tab1}")
+  print.xtable(table, 
+             table.placement = 'H', 
+             comment = FALSE,
+             caption.placement = 'bottom'
+             )
+
+```
+
+\hfill
+
+The most common of these methods are Simple Exponential Smoothing (N,N), Holt’s linear method (A,N) and Holt-Winters seasonal method (A,A). 
+
+Although exponential smoothing methods performed well and have been widely used in business, they did not have any statistical framework underpinning them [@de200625]. They produced point estimates rather than prediction intervals and selection of a forecasting method was specific to the time series in question. Efforts were made by Box and Jenkins to create a statistical framework that underlies exponential smoothing methods and they found that forecasts produced by linear methods are special cases of ARIMA models [@de200625]. This however does not hold for the multiplicative methods.
+
+## State Space Models 
+The motivation behind state space models was the need for a statistical framework that underlies all methods of exponential smoothing [@de200625]. @hyndman2002state provided this framework as an extension of Ord, Koehler, and Snyder’s class of exponential state space models which underpinned some of the smoothing methods [@de200625]. He proposed two state space models, one corresponding to an additive error and the other to a multiplicative error. By specifying a distribution for these error terms, he turned the previously deterministic methods into stochastic models. These two models were then applied to all 15 smoothing methods, producing 30 models in total. 
+
+The two state space models produce identical point estimates to each other as well as to the exponential smoothing methods, however they will generate differing prediction intervals [@hyndman2013forecasting]. Each model consists of a measurement equation and a transition equation. The measurement equation shows the relationship between the observations and the unobserved components (level, trend seasonality), while the transition equation shows how the unobserved components change over time. 
+
+The introduction of the exponential state space model has allowed for model selection using information criteria rather than using an ad hoc method. It has also made the calculation of the likelihood easier and simulation from the underlying model possible [@hyndman2002state].
+
+## Application and Performance 
+In a paper by @smith2015comparison, Holt-Winters exponential smoothing (HWES) model was applied to time series data relating to data on patents. The patent data was classified into three different groups; monthly forecasts were made and the results were compared to forecasts produced by ARIMA models. To avoid over-forecasting, the trend of the HWES was damped to produce forecasts with a flat trend for later observations. The results showed that all models forecasted the data adequately. The HWES model fitted the data well and performed better than the ARIMA models in the case where the time series for the patent group was fairly stationary. Based on the forecasting results, it could not be concluded that a specific time series model is better for forecasting patent data. 
+
+@hassani2015forecasting forecasted tourism demand in specific European countries over a short, medium and long term horizon. The ETS model was used to produce forecasts and was compared to six parametric and non-parametric techniques. The results showed that no single model is best for producing forecasts across all countries and time horizons. The ETS model together with the Neural Networks (NN) and Fractionalized ARIMA (ARFIMA) produced forecasts with the least amount of accuracy and are thus not relevant models for forecasting tourism demand in Europe. 24 steps-ahead error forecasts produced by the ETS model were found to be larger than the errors produced by the benchmark model - Recurrent Single Spectrum Analysis (SSA-R) across all European countries.
+
+## Robustness 
+@gardner2006exponential explained the robustness of ETS models by comparing them to equivalent models. Simple exponential smoothing which is equivalent to an ARIMA(0,1,1) model is the most robust method and has performed well in forecasting many types of time series. By comparing simple exponential smoothing to lower order ARIMA models, it is seen that errors that arise due to model specification is not as much of a problem as ARIMA models. Furthermore, ARIMA models tend to produce larger MSE due to model selection errors, and this is worsened if the errors are not normally distributed [@gardner2006exponential]. 
+
+Satchell and Timmermann found that for time series with a finite history, the weights assigned to each observation in the simple exponential smoothing method are robust, provided that the variance of the random walk relative to the variance of the error component is not too small [@gardner2006exponential]. 
+
+Forecasts produced by simple exponential smoothing have performed well in modelling annual sales of different products, as well as aggregated economic series with low sampling frequencies [@gardner2006exponential].
+
+# Prophet 
+
+## Bayesian Generalized Additive Model
+Prophet is the key work of @taylor2017forecasting and consists of a decomposable model with a component for growth, seasonality, and holidays. These components consist of linear and non-linear functions of time. This is similar to a Generalized Additive Model (GAM) which is a regression model that consists of non-linear and linear regression functions applied to predictor variables [@taylor2017forecasting]. Prophet, like GAM, frames the forecasting problem as a curve fitting exercise using backfitting to find the regression functions. 
+
+The growth component is modelled in a similar way to modelling population growths which uses a logistic growth model [@taylor2017forecasting]. Populations typically grow non-linearly (although the growth component could also be linear) up to an upper bound known as the carrying capacity, and remains constant thereafter. The rate at which the population grows changes over time, and this is accounted for by including changepoints in the model where the growth rate may be changed [@taylor2017forecasting]. These changepoints can be automatically selected and have a Laplace prior distribution placed on them [@taylor2017forecasting]. The parameter of the prior distribution can be used to adjust the growth rate of the changepoints. This allows non-experts with knowledge about events that may affect growth to use the parameter as a knob and adjust it to increase or decrease the number of changepoints [@taylor2017forecasting]. It also allows for the analyst to add changepoints which the automatic selection procedure may have missed [@taylor2017forecasting]. Furthermore, analysts may also specify the carrying capacity and adjust it based on their knowledge of the total market size [@taylor2017forecasting]. 
+
+The decomposable form of the model allows for components to be easily added to it. This allows for multiple seasonality components with different periods to be added to the model. The seasonality component is modelled by a Fourier series, with the parameters of the Fourier series having a Normal prior distribution [@taylor2017forecasting]. The variance of the parameters can be adjusted by analysts to smooth the model and change how much of historical seasonality is projected to the future [@taylor2017forecasting]. 
+
+The name, date, and country of past and future holidays and events may be inputted by the analyst into a list [@taylor2017forecasting]. By specifying the country in which the events take place or the holidays occur, separate lists can be populated for global events/holidays and country-specific events/holidays. The union of the two lists are then used for forecasting. Like seasonality, a Normal prior distribution is placed on the parameters of the holidays, and the variance of the parameters can be adjusted by analysts to smooth the model [@taylor2017forecasting].
+
+## Application and Performance 
+@taylor2017forecasting forecasted the number of events on Facebook using Prophet. The time series was impacted by holidays, had strong multi-period seasonality, and a piecewise trend. The forecasts produced by Prophet were compared to forecasts produced by common automatic forecasting techniques such as ETS, ARIMA, and the seasonal naïve model, as well as to simple models such as the naïve model. While the ETS and seasonal naïve model were quite robust, the ARIMA forecasts were fragile. No model besides Prophet accounted for the dips around holidays and the upward trend of the time series towards later observations. Hence, Prophet had lower forecasting errors compared to the automatic forecasting methods.
+
+## Robustness 
+Prophet is a flexible model and has intuitive parameters that can be easily interpreted by human beings. The GAM is fitted quickly, allowing the analyst to interactively change the model parameters [@taylor2017forecasting]. Unlike ARIMA models, Prophet can produce forecasts over different scales and allows for missing values in the time series without the need for interpolation [@taylor2017forecasting]. 
+
+When a large number of forecasts are produced, manually identifying problematic forecasts becomes a time consuming and difficult task. Prophet provides a semi-automated forecast evaluation system that selects the best model that fits the data. When there are large forecast errors, the forecasts are flagged so that the analyst can explore the cause of the errors, identify and remove potential outliers and either adjust the model or choose a more appropriate model [@taylor2017forecasting].
+
+# Evaluation of Forecasts
+
+## Common Methods 
+Model selection has historically been very subjective, with no techniques that offered mathematical rigour for choosing models [@smith2015comparison]. Progress has been made over time and many mathematical techniques have been introduced for model selection. Use of information criteria is one such method, with Akaike’s information criterion (AIC) and Bayes information criterion (BIC) being the most common [@smith2015comparison]. These information criteria minimize forecasting errors while penalizing it for overfitting. Information criteria should be used to compare models of similar structure only. To compare models of different structure, the most commonly used measures of forecast errors are the Root Mean Squared error (RMSE), Mean Absolute Error (MAE), Mean Absolute Percentage Error (MAPE), and Mean Absolute Scaled Error (MASE). A lower value of these statistics indicates that the forecasts are better, with a MASE less than one indicating that the forecasts are better than those produced by a naïve model [@smith2015comparison]. 
+
+@smith2015comparison have used these methods in their paper when evaluating patent forecasts and making comparisons between the HWES and ARIMA models. In a paper by @hassani2015forecasting they chose their ETS model based on the selection that R automatically made for the time series. They compared models of different structure using the RMSE and a modified Diebold-Mariano test. @hyndman2002state suggests that ETS models should be selected using the AIC rather than the MSE or MAPE. The AIC provides a way of choosing between models with an additive error and models with a multiplicative error since it is based on the likelihood function. The MSE and MAPE are not able to select between the two error types because both models produce the same point estimates. According to @de200625, the best approach of selecting models with different structure is the Diebold-Mariano test. The MSE is scale dependent and should not be used to make comparisons while the MAPE encounters difficulties when the time series values are close to or equal to zero.
+
+## Mincer-Zarnowitz Approach 
+@mincer1969evaluation proposed two methods of measuring forecast accuracy - an absolute and a relative measure. Absolute measures of accuracy measure the distance between actual and predicted values. If the mean distance is equal to zero, the forecast is said to be unbiased [@mincer1969evaluation]. To analyse absolute forecast errors, the observed values are regressed against the predicted values. A joint hypothesis test is performed to check if the intercept is equal to zero and the slope is equal to one. If the intercept is equal to zero, the forecasts are unbiased and do not overestimate or underestimate the data. If the slope is equal to one, the residual errors are uncorrelated with the predictions and the forecast is said to be efficient [@mincer1969evaluation]. The MSE is a measure that can be decomposed into the residual variance and two components, one reflecting the bias and the other reflecting the inefficiency of the forecast. If the forecasts are unbiased and efficient, the MSE will reduce to the residual variance [@mincer1969evaluation]. Absolute forecast measures cannot be used to make comparisons between forecasts with different scales or economic variables. Thiel states that the consequences of forecasting errors and how they impact decisions is of greater importance than the size of the forecasting errors [@mincer1969evaluation]. 
+
+Rather than using absolute measures of forecast accuracy, @mincer1969evaluation suggested the use of relative measures of forecast accuracy. Relative accuracy analysis allows for meaningful comparisons of different forecasting methods to be made. They proposed an index which considers the ratio of the MSE of the forecast to the MSE of a benchmark forecasting method. They used an extrapolation of the data history as a benchmark, as it is a cost effective and accessible method, however the benchmark may be any method which is relevant for comparison. This ratio is known as the Relative Mean Square Error (RM). 
+
+The numerator represents a return which is inversely proportional to the MSE error of the forecasts, while the denominator represents the cost of forecasting which is inversely proportional to the MSE of the benchmark [@mincer1969evaluation]. Hence the ratio is representative of a rate of return index and ranks the performance of forecasts as such. If the forecasts are better than the benchmark, the RM will be less than one.
+
+\newpage
+
+# References

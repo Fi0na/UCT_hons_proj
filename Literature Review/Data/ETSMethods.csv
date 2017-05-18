@@ -1,0 +1,7 @@
+Trend  Seasonality
+ None(N) Additive(A) Multiplicative(M)
+None(N) (N,N) (N,A) (N,M)
+Additive(A) (A,N) (A,A) (A,M)
+Additive_damped(Ad) (Ad,N) (Ad,A) (Ad,M)
+Multiplicative(M) (M,N) (M,A) (M,M)
+Multiplicative_damped(Md) (Md,N) (Md,A) (Md,M)
