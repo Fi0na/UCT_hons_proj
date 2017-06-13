@@ -3,8 +3,8 @@
 # Remove comments and add values where applicable. 
 # The descriptions below should be self-explanatory
 
-title: "An Analysis for Why Fiona Would Still Uses Edge and Bing"
-subtitle: "This will appear as Right Header"
+title: "Hanjo's Rmarkdown Template"
+#subtitle: "This will appear as Right Header"
 
 documentclass: "elsarticle"
 
