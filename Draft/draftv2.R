@@ -1,16 +1,22 @@
 
 # -------------------------------READING IN DATASET------------------------------------------------
 
-setwd("~/R/UCT_hons_proj/Draft/Data")
-ExchangeRates <- read.csv("prices.csv", header = TRUE, sep = ";", dec = ",")
-
 # Loading required packages
 library(rmsfuns)
-packagestoload <- c("stats", "xts", "readr", "dplyr", "Dplyr2Xts", "PerformanceAnalytics", "ggplot2")
+packagestoload <- c("stats", "xts", "readr", "dplyr", "Dplyr2Xts", "PerformanceAnalytics", "ggplot2", "readr", "gridExtra", "lmtest")
 load_pkg(packagelist = packagestoload) 
 
+# Hanjo - add library readr
+
+setwd("~/R/UCT_hons_proj/Draft/Data")
+
+# Hanjo - Set relative path thanks to proj
+ExchangeRates <- read_csv2("Draft/Data/prices.csv")
+
 # Looking at first few rows of dataset
-ExchangeRates %>% data.frame %>% head
+ExchangeRates %>% 
+  data.frame %>% 
+  head
 
 # Looking at structure of dataset
 dim(ExchangeRates)
@@ -19,7 +25,8 @@ str(ExchangeRates)
 #--------------------------------- CLEANING THE DATASET--------------------------------------------
 
 # Order dates in ascending order
-ExchangeRates <- ExchangeRates %>% arrange(TradeDate)
+ExchangeRates <- ExchangeRates %>% 
+  arrange(TradeDate)
 
 # Make date column time-based
 ExchangeRates$TradeDate <- as.Date(ExchangeRates$TradeDate)
@@ -34,7 +41,12 @@ which(na_true)
 plot_prices <- ggplot(ExchangeRates, aes(TradeDate, ClosePrice)) + 
   geom_line() +
   xlab("Trade Date") +
-  ylab("Closing Prices")
+  ylab("Closing Prices") + 
+  theme_minimal() + 
+  labs(title  = paste("BTC Price from", 
+                      ExchangeRates$TradeDate[1],
+                      "to",
+                      ExchangeRates$TradeDate[nrow(ExchangeRates)]))
 
 plot_prices 
 # no unusual observations
@@ -43,13 +55,18 @@ plot_prices
 # Calculating daily log returns
 ExchangeRates <- 
   ExchangeRates %>%
-  mutate(DailyLogReturns = c(NA, diff(log(ClosePrice), lag=1)))
+  mutate(DailyLogReturns = c(NA, diff(log(ClosePrice), lag = 1)))
 
 # Plot of daily log returns
 plot_returns <- ggplot(ExchangeRates, aes(TradeDate, DailyLogReturns)) + 
   geom_line() +
   xlab("Trade Date") +
-  ylab("Daily Log Returns")
+  ylab("Daily Log Returns") +
+  theme_minimal() + 
+  labs(title  = paste("BTC Returns from", 
+                      ExchangeRates$TradeDate[1],
+                      "to",
+                      ExchangeRates$TradeDate[nrow(ExchangeRates)]))
 
 plot_returns 
 # Returns fluctutate around zero and lies within a fixed range with the exception of few extremes
@@ -75,57 +92,69 @@ basicStats(daily_logret)
 load_pkg("lubridate")
 
 # Subsetting for forecast horizon of one month:
-
+# Shortened notation
 # Test Set
-OneMonth_OutOfSample <- ExchangeRates %>% mutate(TradeDate = ymd(TradeDate) ) %>% 
-  dplyr::filter(TradeDate >= ymd(20170615)) %>%
-  mutate(TradeDate = as.Date(TradeDate))  
+OneMonth_OutOfSample <- ExchangeRates %>%
+  dplyr::filter(TradeDate >= "2017-06-15")
 
 # Training Set
-OneMonth_InSample <- ExchangeRates %>% mutate(TradeDate = ymd(TradeDate) ) %>% 
-  dplyr::filter(TradeDate < ymd(20170615)) %>%
-  mutate(TradeDate = as.Date(TradeDate)) 
+OneMonth_InSample <- ExchangeRates %>%
+  dplyr::filter(TradeDate < "2017-06-15")
 
 # Plots of training and test sets closing prices
-plot_1MonthTestPrices <- plot_prices %+% OneMonth_OutOfSample + ggtitle("1 Month Test Set Closing Prices")
-plot_1MonthTrainPrices <- plot_prices %+% OneMonth_InSample + ggtitle("1 Month Training Set Closing Prices") + theme_minimal()
+plot_1MonthTestPrices <- plot_prices %+% 
+  OneMonth_OutOfSample + ggtitle("1 Month Test Set Closing Prices")
 
-plot_1MonthTrainPrices
-plot_1MonthTestPrices
+plot_1MonthTrainPrices <- plot_prices %+% 
+  OneMonth_InSample + ggtitle("1 Month Training Set Closing Prices") +
+  theme_minimal()
+
+grid.arrange(plot_1MonthTrainPrices,
+             plot_1MonthTestPrices,
+             nrow = 2)
+
 
 # Plots of training and test sets daily log returns
 plot_1MonthTestReturns <- plot_returns %+% OneMonth_OutOfSample + ggtitle("1 Month Test Set Daily Log Returns")
 plot_1MonthTrainReturns <- plot_returns %+% OneMonth_InSample + ggtitle("1 Month Training Set Daily Log Returns") + theme_minimal()
 
-plot_1MonthTrainReturns
-plot_1MonthTestReturns
-
+grid.arrange(plot_1MonthTrainReturns,
+             plot_1MonthTestReturns,
+             nrow = 2)
 # Subsetting for forecast horizon of three months:
 
 # Test Set
-ThreeMonth_OutOfSample <- ExchangeRates %>% mutate(TradeDate = ymd(TradeDate) ) %>% 
-  dplyr::filter(TradeDate >= ymd(20170415)) %>%
-  mutate(TradeDate = as.Date(TradeDate))  
+ThreeMonth_OutOfSample <- ExchangeRates %>% 
+  dplyr::filter(TradeDate >= "2017-04-15")
 
 # Training Set
-ThreeMonth_InSample <- ExchangeRates %>% mutate(TradeDate = ymd(TradeDate) ) %>% 
-  dplyr::filter(TradeDate < ymd(20170415)) %>%
-  mutate(TradeDate = as.Date(TradeDate)) 
+ThreeMonth_InSample <- ExchangeRates %>% 
+  dplyr::filter(TradeDate < "2017-04-15")
 
 # Plots of training and test sets closing prices
-plot_3MonthTestPrices <- plot_prices %+% ThreeMonth_OutOfSample + ggtitle("3 Month Test Set Closing Prices")
-plot_3MonthTrainPrices <- plot_prices %+% ThreeMonth_InSample + ggtitle("3 Month Training Set Closing Prices") + theme_minimal()
+plot_3MonthTestPrices <- plot_prices %+% 
+  ThreeMonth_OutOfSample + 
+  ggtitle("3 Month Test Set Closing Prices")
+plot_3MonthTrainPrices <- plot_prices %+% 
+  ThreeMonth_InSample + 
+  ggtitle("3 Month Training Set Closing Prices") + 
+  theme_minimal()
 
-plot_3MonthTrainPrices
-plot_3MonthTestPrices
-
+grid.arrange(plot_3MonthTrainPrices,
+             plot_3MonthTestPrices,
+             nrow = 2)
 # Plots of training and test sets daily log returns
-plot_3MonthTestReturns <- plot_returns %+% ThreeMonth_OutOfSample + ggtitle("3 Month Test Set Daily Log Returns")
-plot_3MonthTrainReturns <- plot_returns %+% ThreeMonth_InSample + ggtitle("3 Month Training Set Daily Log Returns") + theme_minimal()
+plot_3MonthTestReturns <- plot_returns %+% 
+  ThreeMonth_OutOfSample + 
+  ggtitle("3 Month Test Set Daily Log Returns")
+plot_3MonthTrainReturns <- plot_returns %+% 
+  ThreeMonth_InSample + 
+  ggtitle("3 Month Training Set Daily Log Returns") + 
+  theme_minimal()
 
-plot_3MonthTrainReturns
-plot_3MonthTestReturns
-
+grid.arrange(plot_3MonthTrainReturns,
+             plot_3MonthTestReturns,
+             nrow = 2)
 # ---HOW DO THE FORECASTS FROM ARIMA & PROPHET COMPARE OVER DIFFERENT FORECAST HORIZONS-----
 
 library(forecast)
@@ -182,6 +211,11 @@ summary(arima_3)
 
 arima_4 <- Arima(na.omit(OneMonth_InSampleRet), order = c(1,0,1))  
 summary(arima_4)
+
+# Hanjo - Although smallest AIC was mean-model, for the purpose of this paper we employ the ARIMA(1,0,1) as our benchmark so that statistical inference can be conducted. Analysis of the p-values indicate that the AR and MA parameters of the model are statistical relevant in the explanation of the movement of BTC/ZAR.
+# As a further point of research, statistical techniques can be conducted to determine whether ARIMA(0, 0, 0) and ARIMA(1, 0, 1) differ. These do not get addressed in this paper as it is outside of the research scope. 
+lmtest::coeftest(arima_4)
+
 # arima(1,0,1)
 # AICC = -1352.4
 
@@ -207,7 +241,7 @@ summary(arima_7)
 # arima(0,0,1)
 # AICC = -1156.89 
 
-arima_8 <- Arima(na.omit(OneMonth_InSampleRet), order = c(1,0,1))  
+arima_8 <- Arima(na.omit(ThreeMonth_InSampleRet), order = c(1,0,1))  
 summary(arima_8)
 # arima(0,0,1)
 # AICC = -1352.4
@@ -227,8 +261,12 @@ checkresiduals(arima_5)
 
 # Forecasting with ARIMA Model over 1 month and 3 months
 
-OneMonth_OutOfSampleRet <- OneMonth_OutOfSample %>% select(DailyLogReturns)
-ThreeMonth_OutOfSampleRet <- ThreeMonth_OutOfSample %>% select(DailyLogReturns)
+OneMonth_OutOfSampleRet <- OneMonth_OutOfSample %>% 
+  select(DailyLogReturns) %>% 
+  unlist
+
+ThreeMonth_OutOfSampleRet <- ThreeMonth_OutOfSample %>% 
+  select(DailyLogReturns)
 
 # One step ahead forecasts without re-estimation
 # pred_arima1 <- Arima(OneMonth_OutOfSampleRet, model = arima_1)
@@ -242,11 +280,77 @@ dataframe_OneMonth_arima_pred <- summary(OneMonth_arima_pred)
 plot(OneMonth_arima_pred)
 # Constant mean of 0.003906162 is forecasted
 
+# Hanjo
+fore_arima <- forecast(arima_4, h = 30)
+plot(fore_arima)
+accuracy(fore_arima, x = OneMonth_OutOfSampleRet)
+# -------------------------------
+
 # One step ahead forecasts for 3 months
 ThreeMonth_arima_pred <- forecast(arima_5, h = nrow(ThreeMonth_OutOfSampleRet))
 dataframe_ThreeMonth_arima_pred <- summary(ThreeMonth_arima_pred)
 plot(ThreeMonth_arima_pred)
 # Constant mean of 0.002072763 is forecasted
+# -------------------------------
+
+# Hanjo - you need to itteratively loop over the prediction period and test the difference time-horizons (1, 5, 20 days)
+
+# Hanjo - t+1 forecasts 1 month out of sample
+fore_sample <- seq.Date(as.Date("2017-06-15"), 
+                          by = "day" ,
+                          length.out = 30)
+
+all_forecasts_error <- list()
+for(i in 1:length(fore_sample)){
+  in_sample <- ExchangeRates %>%
+    dplyr::filter(TradeDate < fore_sample[i]) %>% 
+    select(DailyLogReturns)
+  
+  
+  out_sample <- ExchangeRates %>%
+    dplyr::filter(TradeDate == fore_sample[i]) %>% 
+    select(DailyLogReturns)
+  
+  arima_model <- Arima(in_sample, order = c(1,0,1))  
+  fore_arima <- forecast(arima_model, h = 1)
+  # plot(fore_arima)
+  for_res <- accuracy(fore_arima, x = as.numeric(out_sample))
+  all_forecasts_error[[i]] <- data.frame(actual = as.numeric(out_sample),
+                                         forecast = as.numeric(fore_arima$mean),
+                                         error = for_res[2,1])
+}
+
+all_forecasts_error <- do.call(rbind, all_forecasts_error)
+
+# Hanjo - t+5 forecasts 1 month out of sample
+# Obviously make your out of sample period a lot longer -+ 3 month
+fore_sample <- seq.Date(as.Date("2017-06-15"), 
+                        to = as.Date("2017-07-14"),
+                        by = "+5 day")
+
+all_forecasts_error <- list()
+for(i in 1:(length(fore_sample) - 1)){
+  in_sample <- ExchangeRates %>%
+    dplyr::filter(TradeDate < fore_sample[i]) %>% 
+    select(DailyLogReturns)
+  
+  
+  out_sample <- ExchangeRates %>%
+    dplyr::filter(TradeDate >= fore_sample[i], TradeDate < fore_sample[i+1]) %>% 
+    select(DailyLogReturns)
+  
+  arima_model <- Arima(in_sample, order = c(1,0,1))  
+  fore_arima <- forecast(arima_model, h = 5)
+  # plot(fore_arima)
+  for_res <- accuracy(fore_arima, x = unlist(out_sample))
+  all_forecasts_error[[i]] <- data.frame(actual = unlist(out_sample),
+                                         forecast = as.numeric(fore_arima$mean),
+                                         error = unlist(out_sample)- as.numeric(fore_arima$mean))
+}
+
+all_forecasts_error_t5 <- do.call(rbind, all_forecasts_error)
+
+
 
 # ------ Evaluating forecast accuracy of arima models
 library(broom)
@@ -263,16 +367,19 @@ OneMonth_dates <- OneMonth_OutOfSample %>% select(TradeDate)
 OneMonth_results <- data.frame(OneMonth_dates, OneMonth_OutOfSampleRet, OneMonth_yhat)
 
 # Regression of actual and forecasted observations
-OneMonth_mincer <- lm(DailyLogReturns ~ Point.Forecast, data = OneMonth_results)
+OneMonth_mincer <- all_forecasts_error %>%  
+  lm(actual ~ forecast, data = .)
 summary(OneMonth_mincer)
-OneMonth_arima_mincercoeff <- tidy(summary(OneMonth_mincer)) %>% select(estimate)
+OneMonth_arima_mincercoeff <- tidy(summary(OneMonth_mincer))
 # intercept = -0,002394: negative bias estimated 
 # forecast systematically overestimates the actual observation
 # Can't find estimate of slope :(
+# Hanjo - Fixed it, now slope is included
+
 
 # Joint hypothesis to test int=0 and slope=1
 library(car)
-OneMonth_hyp <- linearHypothesis(OneMonth_mincer, c("(Intercept) = 0", "Point.Forecast = 1")) 
+OneMonth_hyp <- linearHypothesis(OneMonth_mincer, c("(Intercept) = 0", "forecast = 1")) 
 # Can't do F-test because of missing coefficient estimate
 
 # Finding MSE of 1 month forecasts:
@@ -335,7 +442,10 @@ ThreeMonth_InSam_Proph <- ThreeMonth_InSample %>% select(ds = TradeDate, y = Dai
 # Choosing Prophet model:
 
 # Fitting model for 1 month
-prophet_1 <- prophet(df = OneMonth_InSam_Proph, growth = "linear", weekly.seasonality = TRUE, yearly.seasonality = FALSE)
+prophet_1 <- prophet(df = OneMonth_InSam_Proph, 
+                     growth = "linear", 
+                     weekly.seasonality = TRUE, 
+                     yearly.seasonality = FALSE)
 # No max of returns so setting trend to be linear
 
 # Include weekly seasonality to account for little trading activity from Friday to Sunday and high activity around Tuesday and Wednesday 
