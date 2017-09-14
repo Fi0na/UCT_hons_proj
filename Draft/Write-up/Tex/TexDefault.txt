@@ -1,0 +1,68 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{url}
+\usepackage{appendix}
+\usepackage[british]{babel}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+
+\usepackage[round]{natbib}
+\bibliographystyle{natbib}
+\def\bibsection{\section*{References}}
+
+% Wrap around which gives all figures included the [H] command, or places it "here". This can be tedious to code in Rmarkdown.
+\usepackage{float}
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[H]
+} {
+    \endorigfigure
+}
+
+\let\origtable\table
+\let\endorigtable\endtable
+\renewenvironment{table}[1][2] {
+    \expandafter\origtable\expandafter[H]
+} {
+    \endorigtable
+}
+
+\def\tightlist{}
+
+\bibpunct[:]{(}{)}{;}{a}{,}{,}
+
+\renewcommand{\baselinestretch}{1.5}
+
+\begin{document}
+
+\begin{titlepage}
+
+\begin{center}
+{\Huge \bf $title$}\\
+\today\\
+$Author$ ($if(Student)$$Student$$endif$)\\
+{\tt $Student$@myuct.ac.za}
+\end{center}
+
+\begin{abstract}
+$abstract$
+\noindent
+Keywords: Prophet, ARIMA, Mincer-Zarnowitz,   Box-Jenkins, Bitcoin.
+\end{abstract}
+\end{titlepage}
+
+\pagenumbering{arabic}
+
+$body$
+
+\newpage
+\renewcommand{\baselinestretch}{1}
+\nocite{*}
+\bibliography{}
+
+\end{document}

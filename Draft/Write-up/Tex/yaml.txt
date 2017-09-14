@@ -1,0 +1,18 @@
+---
+# IMPORTANT: Change settings here, but DO NOT change the spacing. 
+# Remove comments and add values where applicable. 
+# The descriptions below should be self-explanatory
+title: "Hanjo's Rmarkdown Template"
+#subtitle: "This will appear as Right Header"
+Author: "Hanjo"  # First Author
+Student: "15290743"
+bibliography: Tex/ref.bib       # Do not edit: Keep this naming convention and location.
+output:
+  pdf_document:
+    keep_tex: TRUE
+    template: Tex/TexDefault.txt
+    fig_width: 5 # Adjust default figure sizes. This can also be done in the chunks of the text
+    fig_height: 4
+abstract: |
+  Abstract to be written here. The abstract should not be too long and should provide the reader with a good understanding what you are writing about. Academic papers are not like novels where you keep the reader in suspense. To be effective in getting others to read your paper, be as open and concise about your findings here as possible. Ideally, upon reading your abstract, the reader should feel he / she must read your paper in entirety.
+---
