@@ -567,7 +567,7 @@ RMSE.
 
 The Model Confidence Set (MCS) procedure developed by Hansen, Lunde, and
 Nason (2011) is a sequential procedure which starts with an initial set
-of models \(M_0\) of size m. The worse model is then eliminated at each
+of models \(M_0\) of size m. The worst model is then eliminated at each
 step until the null hypothesis of equal predictive ability (EPA) fails
 to be rejected for all the models belonging to the set at a given
 confidence level \(1 - \alpha\). This smaller set of models \(M^*\) is
@@ -577,7 +577,7 @@ SSM consists of a single best model.
 The null hypothesis for EPA for a set of models \(M\) is given by:
 \[H_0: \mu_i,_j = 0 \;\;\; \forall \;\; i,j = 1,...,m\]
 
-where \(\mu_i,_j = E[d_i,_j]\) represents the expected loss
+where \(\mu_i,_j = E[d_i,_j,_t]\) represents the expected loss
 differential, \(d_i,_j,_t = l_i,_t - l_j,_t\) represents the loss
 differential between models \(i\) and \(j\) at time t, and \(l_i,_t\)
 and \(l_j,_t\) are the loss functions associated with model \(i\) and
@@ -590,14 +590,14 @@ statistics:
 
 \[t_i,_j = \frac{\bar{d_i,_j}}{\sqrt{\hat{var[\bar{d_i,_j}]}}}\]
 \vspace{1pt} \[ T_R = \max_{i,j\in M} \;\; |t_i,_j|\] where
-\(d_i,_j = m^{-1}\sum_{t=1}^{m}{d_i,_j,_t }\) measures the sample
+\(\bar{d_i,_j} = m^{-1}\sum_{t=1}^{m}{d_i,_j,_t }\) measures the sample
 average loss differential between model \(i\) and \(j\) and
 \(\hat{var[\bar{d_i,_j}]}\) is estimated through bootstrapping as
 described in Hansen, Lunde, and Nason (2011).
 
 This paper uses a block--bootstrap procedure of 5000 resamples as in
 Hansen, Lunde, and Nason (2011). The block length \(p\) is chosen by
-fitting an AR(p) model to the \(d_i,_j\) terms and determining the
+fitting an AR(p) model to the \(d_i,_j,_t\) terms and determining the
 maximum number of significant AR parameters obtained. While \(t_i,_j\)
 has a t-distribution, \(T_R\) has a non-standard distribution under the
 null hypothesis hence is estimated by implementing a bootstrapping
