@@ -4,7 +4,7 @@
 # Let's test this out
 
 missing_eval <- function(Data){
-  
+
 # Insert missing values
 ExchangeRates <- ExchangeRates %>% select(TradeDate, DailyLogReturns)
 ExchangeRates[c(4, 10, 17, 20, 35, 48, 50, 100, 110, 177, 140, 157, 200, 230, 245, 270, 286, 300, 323, 330),2] <- NA
@@ -204,7 +204,7 @@ plot_one_step_arima <- ggplot(ExchangeRates, aes(x = TradeDate, y = DailyLogRetu
   xlab("Trade Date") +
   ylab("Daily Log Returns") +
   theme_minimal() + 
-  labs(title  = paste("One-step ahead forecasts from ARIMA(3,0,0)"))
+  labs(title  = paste("1-step ahead forecasts from ARIMA(3,0,0)"))
 
 # Plot of 1 step-ahead Prophet forecasts
 plot_one_step_proph <- ggplot(ExchangeRates, aes(x = TradeDate, y = DailyLogReturns)) +
@@ -214,11 +214,31 @@ plot_one_step_proph <- ggplot(ExchangeRates, aes(x = TradeDate, y = DailyLogRetu
   xlab("Trade Date") +
   ylab("Daily Log Returns") +
   theme_minimal() + 
-  labs(title  = paste("One-step ahead Prophet forecasts"))
+  labs(title  = paste("1-step ahead Prophet forecasts"))
 
 grid.arrange(plot_one_step_arima,
              plot_one_step_proph,
              nrow = 2)
+
+# One-step Model Confidence Set
+library(MCS)
+
+# One-step squared error losses
+one_step_arima_losses <- LossLevel(realized = One_Step_Results %>% select(actual),
+                                   evaluated = One_Step_Results %>% select(arima_forecast), 
+                                   which = "SE")
+
+one_step_proph_losses <- LossLevel(realized = One_Step_Results %>% select(actual),
+                                   evaluated = One_Step_Results %>% select(proph_forecast), 
+                                   which = "SE")
+
+one_step_losses <- data.frame(one_step_arima_losses, one_step_proph_losses)
+
+one_step_losses <- one_step_losses %>% 
+  select(ARIMA = arima_forecast, Prophet = proph_forecast)
+
+# One-step MCS
+one_step_MCS <- MCSprocedure(Loss = one_step_losses, alpha = 0.10, B = 5000, statistic = "TR")
 
 # Forecasting 30-steps ahead for 6 month out-of-sample 
 h = 30
@@ -307,6 +327,25 @@ grid.arrange(plot_Thirty_step_arima,
              plot_Thirty_step_proph,
              nrow = 2)
 
+# Thirty-step Model Confidence Set
+
+# Thirty-step squared error losses
+thirty_step_arima_losses <- LossLevel(realized = Thirty_Step_Results %>% select(actual),
+                                      evaluated = Thirty_Step_Results %>% select(arima_forecast), 
+                                      which = "SE")
+
+thirty_step_proph_losses <- LossLevel(realized = Thirty_Step_Results %>% select(actual),
+                                      evaluated = Thirty_Step_Results %>% select(proph_forecast), 
+                                      which = "SE")
+
+thirty_step_losses <- data.frame(thirty_step_arima_losses, thirty_step_proph_losses)
+
+thirty_step_losses <- thirty_step_losses %>% 
+  select(ARIMA = arima_forecast, Prophet = proph_forecast)
+
+# Thirty-step MCS
+thirty_step_MCS<- MCSprocedure(Loss = thirty_step_losses, alpha = 0.10, B = 5000, statistic = "TR")
+
 # Forecasting 90-steps ahead for 6 month out-of-sample 
 h = 90
 
@@ -394,7 +433,27 @@ grid.arrange(plot_ninety_step_arima,
              plot_ninety_step_proph,
              nrow = 2)
 
-# ------ Evaluating forecast accuracy of arima models
+# Ninety-step Model Confidence Set
+
+# Ninety-step squared error losses
+ninety_step_arima_losses <- LossLevel(realized = Ninety_Step_Results %>% select(actual),
+                                      evaluated = Ninety_Step_Results %>% select(arima_forecast), 
+                                      which = "SE")
+
+ninety_step_proph_losses <- LossLevel(realized = Ninety_Step_Results %>% select(actual),
+                                      evaluated = Ninety_Step_Results %>% select(proph_forecast), 
+                                      which = "SE")
+
+ninety_step_losses <- data.frame(ninety_step_arima_losses, ninety_step_proph_losses)
+
+ninety_step_losses <- ninety_step_losses %>% 
+  select(ARIMA = arima_forecast, Prophet = proph_forecast)
+
+# Ninety-step MCS
+ninety_step_MCS <- MCSprocedure(Loss = ninety_step_losses, alpha = 0.10, B = 5000, statistic = "TR")
+
+
+# ------ Mincer Zarnowitz test and error statistics for ARIMA model
 
 library(broom)
 library(car)
@@ -432,7 +491,10 @@ plot_1step_arima_mincer
 
 # Finding MSE of 1 step-ahead forecasts:
 one_step_arima_accuracy <- tidy(accuracy(One_Step_Results[,3], One_Step_Results[,2]))
+
 one_step_arima_rmse <- one_step_arima_accuracy %>% select(RMSE)
+# RMSE = 0.04552564
+
 one_step_arima_mse <- (one_step_arima_rmse %>% select(MSE = RMSE))^2
 # MSE = 0.002072583
 
@@ -469,7 +531,10 @@ plot_30step_arima_mincer
 
 # Finding MSE of 30-steps ahead forecasts:
 thirty_step_arima_accuracy <- tidy(accuracy(Thirty_Step_Results[,3], Thirty_Step_Results[,2]))
+
 thirty_step_arima_rmse <- thirty_step_arima_accuracy %>% select(RMSE)
+# RMSE = 0.04475812
+
 thirty_step_arima_mse <- (thirty_step_arima_rmse %>% select(MSE = RMSE))^2
 # MSE = 0.002003289
 
@@ -506,11 +571,14 @@ plot_90step_arima_mincer
 
 # Finding MSE of 90-steps ahead forecasts:
 ninety_step_arima_accuracy <- tidy(accuracy(Ninety_Step_Results[,3], Ninety_Step_Results[,2]))
+
 ninety_step_arima_rmse <- ninety_step_arima_accuracy %>% select(RMSE)
+# RMSE = 0.04230182
+
 ninety_step_arima_mse <- (ninety_step_arima_rmse %>% select(MSE = RMSE))^2
 # MSE = 0.001789444
 
-# ------ Evaluating forecast accuracy of Prophet
+# ------ Mincer Zarnowitz test and error statistics for Prophet
 
 # Mincer-Zarnowitz test for 1-step forecast:
 
@@ -545,7 +613,10 @@ plot_1step_proph_mincer
 
 # Finding MSE of 1 step-ahead forecasts:
 one_step_proph_accuracy <- tidy(accuracy(One_Step_Results[,6], One_Step_Results[,2]))
+
 one_step_proph_rmse <- one_step_proph_accuracy %>% select(RMSE)
+# RMSE = 
+
 one_step_proph_mse <- (one_step_proph_rmse %>% select(MSE = RMSE))^2
 # MSE = 0.002135501
 
@@ -582,7 +653,10 @@ plot_30step_proph_mincer
 
 # Finding MSE of 30 step-ahead forecasts:
 thirty_step_proph_accuracy <- tidy(accuracy(Thirty_Step_Results[,6], Thirty_Step_Results[,2]))
+
 thirty_step_proph_rmse <- thirty_step_proph_accuracy %>% select(RMSE)
+# RMSE = 0.04818301
+
 thirty_step_proph_mse <- (thirty_step_proph_rmse %>% select(MSE = RMSE))^2
 # MSE = 0.002321602
 
@@ -619,7 +693,10 @@ plot_90step_proph_mincer
 
 # Finding MSE of 90 step-ahead forecasts:
 ninety_step_proph_accuracy <- tidy(accuracy(Ninety_Step_Results[,6], Ninety_Step_Results[,2]))
+
 ninety_step_proph_rmse <- ninety_step_proph_accuracy %>% select(RMSE)
+# RMSE = 0.04506104
+
 ninety_step_proph_mse <- (ninety_step_proph_rmse %>% select(MSE = RMSE))^2
 # MSE = 0.002030498
 
@@ -653,10 +730,7 @@ one_step_arima_mincer <- rbind(one_step_arima_mincercoef, one_step_arima_mincerp
 # Table of 1-step ahead results
 mincer_table1 <- t(data.frame(one_step_arima_mincer, one_step_proph_mincer, row.names = c("intercept", "slope", "p-value", "MSE")))
 kable(mincer_table1)
-# Arima forecasts are less biased
-# Prophet forecasts are more efficient
 # Both arima and prophet forecasts are inefficient and biased
-# 1-step forecasts are better for arima than prophet
 # MSE of arima smaller than prophet - agrees with MZ test
 
 # Prophet results for 30-steps ahead 
@@ -684,10 +758,7 @@ thirty_step_arima_mincer <- rbind(thirty_step_arima_mincercoef, thirty_step_arim
 # Table of 30-step ahead results
 mincer_table2 <- t(data.frame(thirty_step_arima_mincer, thirty_step_proph_mincer, row.names = c("intercept", "slope", "p-value", "MSE")))
 kable(mincer_table2)
-# Prophet forecasts are less biased
-# Prophet forecasts are more efficient
 # Both arima and prophet forecasts are inefficient and biased
-# 30-step forecasts are better for arima than prophet
 # MSE of arima smaller than prophet - agrees with MZ test
 
 # Prophet results for 90-steps ahead 

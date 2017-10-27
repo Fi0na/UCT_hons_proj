@@ -51,8 +51,8 @@ $Author$ ($if(Student)$$Student$$endif$)\\
 
 \begin{abstract}
 $abstract$
-\noindent
-Keywords: Prophet, ARIMA, Mincer-Zarnowitz,   Box-Jenkins, Bitcoin.
+\noindent\\
+Keywords: Prophet, ARIMA, Mincer-Zarnowitz,   Box-Jenkins, Bitcoin, Model Confidence Set
 \end{abstract}
 \end{titlepage}
 

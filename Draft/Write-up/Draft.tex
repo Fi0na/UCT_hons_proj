@@ -43,9 +43,8 @@
 \begin{titlepage}
 
 \begin{center}
-{\Huge \bf How does the latest Prophet forecasting model compare to the ARIMA
-model? Evaluation of BTC/ZAR predictability through a Mincer-Zarnowitz
-approach}\\
+{\Huge \bf A comparison between the latest Prophet forecasting model and the ARIMA
+model: An evaluation of BTC/ZAR predictability}\\
 \today\\
 Fiona Ganie (GNXFIO001)\\
 {\tt GNXFIO001@myuct.ac.za}
@@ -61,7 +60,7 @@ used as the standard benchmark model against which these complex methods
 have been compared. Although they have produced significantly better
 results than the ARIMA model, these models lack interpretability and
 building them is a challenging task. Prophet is a sophisticated model
-that differs to traditional time series models in that it can be
+that differs from traditional time series models in that it can be
 utilised by non-experts who have little knowledge about the statistical
 intricacies involved in the model, however have domain knowledge about
 the data generating process. Prophet is also robust to outliers and can
@@ -74,8 +73,8 @@ and outliers present is used in the analysis. It is found that the ARIMA
 model produces the most efficient and unbiased forecasts over all
 forecast horizons, and that the ARIMA model is more robust when faced
 with missing values and outliers present in the data.
-\noindent
-Keywords: Prophet, ARIMA, Mincer-Zarnowitz,   Box-Jenkins, Bitcoin.
+\noindent\\
+Keywords: Prophet, ARIMA, Mincer-Zarnowitz,   Box-Jenkins, Bitcoin, Model Confidence Set
 \end{abstract}
 \end{titlepage}
 
@@ -85,7 +84,7 @@ Keywords: Prophet, ARIMA, Mincer-Zarnowitz,   Box-Jenkins, Bitcoin.
 \label{Introduction}}{Introduction }}\label{introduction}
 
 The Autoregressive Integrated Moving Average (ARIMA) model is one of the
-most widely used time series models that has attracted attention in
+most widely used time series models that have attracted attention in
 financial market forecasting (Khashei, Bijari, and Ardali 2009).
 Although the Random Walk model has typically been applied to foreign
 exchange markets and has produced superior results, some researchers
@@ -106,18 +105,18 @@ methods have been compared. Although they have produced significantly
 better results than the ARIMA model, these models lack interpretability
 and building them is a challenging task. The ARIMA model is tractable
 and less computationally expensive. It has been used as the building
-blocks for more advanced models and has provided the inspiration for
+block for more advanced models and has provided the inspiration for
 hybrid versions of the model which have been used in exchange rate
 forecasting.
 
 In December 2016, Facebook open-sourced their forecasting model Prophet.
-Prophet differs to traditional time series model such as the ARIMA, in
+Prophet differs from traditional time series model such as the ARIMA in
 that it can produce high quality forecasts in a straightforward way.
 Prophet is a sophisticated model that provides informative results,
 however is configurable and easy to use. It can be utilised by
 non-experts who have little knowledge about the statistical intricacies
 involved in the model, however have domain knowledge about the data
-generating process. This knowledge can be easily incorporated into the
+generating process. This knowledge can easily be incorporated into the
 model through its intuitively adjustable parameters (Taylor and Letham
 2017). Furthermore, Prophet is robust to outliers and can handle missing
 values in the time series without the need for interpolation (Taylor and
@@ -129,51 +128,217 @@ that are less tractable and flexible.
 
 This paper broadly aims to compare the forecasts produced by the
 traditional ARIMA model and Prophet through an evaluation of the
-exchange rate between Bitcoin and the Rand (BTC/ZAR), using a
-Mincer-Zarnowitz approach of measuring forecast accuracy. More
-specifically, this paper aims to:
+exchange rate between Bitcoin and the Rand (BTC/ZAR), using the Model
+Confidence Set and a Mincer-Zarnowitz approach of measuring forecast
+accuracy. More specifically, this paper aims at:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Compare the out-of-sample forecasts of ARIMA and Prophet over varying
-  forecast horizons.
+  Comparing the out-of-sample forecasts of ARIMA and Prophet over
+  varying forecast horizons.
 \item
-  Compare the out-of-sample forecast performance with missing values and
-  outliers present in the data.
+  Comparing the out-of-sample forecast performance with missing values
+  and outliers present in the data.
 \end{enumerate}
 
-Section \ref{Background and Theory} will present the key findings from
-the major works in which comparisons have been made to the ARIMA model
-in exchange rate forecasting, as well as the theory behind the ARIMA and
-Prophet model. Section \ref{Data} will provide a brief explanation and
-motivation for the dataset used in this paper. Section \ref{Methodology}
-will describe the methodology used in selecting the ARIMA and Prophet
-models and the Mincer-Zarnowitz approach of measuring forecast accuracy.
-The results from applying the ARIMA and Prophet model to the dataset is
-presented in Section \ref{Results}. Finally, Section
-\textbackslash{}ref\{Discussion and Conclusions discusses the results in
-a statistical context.
+Section \ref{Background} will present the key findings from the major
+works in which comparisons have been made to the ARIMA model in exchange
+rate forecasting. Section \ref{Data} will provide a brief explanation
+and motivation for the dataset used in this paper. Section
+\ref{Forecasting Methods} explains and compares the formulation of the
+ARIMA and Prophet model. Section \ref{Methodology} will describe the
+methodology used in selecting the ARIMA and Prophet models, the Model
+Confidence Set and the Mincer-Zarnowitz approach of measuring forecast
+accuracy. The results from applying the ARIMA and Prophet model to the
+dataset is presented in Section \ref{Results}. Finally, section
+\ref{Discussion and Conclusions} discusses the results and its financial
+implications in a statistical context.
 
-\section{\texorpdfstring{Background and Theory
-\label{Background and Theory}}{Background and Theory }}\label{background-and-theory}
+\section{\texorpdfstring{Background
+\label{Background}}{Background }}\label{background}
 
 \subsection{Forecasting Exchange Rates with the ARIMA
 model}\label{forecasting-exchange-rates-with-the-arima-model}
 
-ARIMA models became highly popular since its introduction by Box and
-Jenkins, when it was shown that they could outperform complex
-econometric models in a variety of situations (Hibon and Makridakis
-1997). The ARIMA model expresses the process \{\(y_t\)\} as a function
-of the weighted average of past values of the process and lagged values
-of the residuals. The weighted average of the past p values of the
-process represents an autoregressive (AR) process of order p.~It feeds
-back past values of the process into the current value, inducing
-correlation between all lags of the process. The weighted average of the
-q lagged residuals represents a moving average (MA) process of order q.
-The purpose of mixing the MA process with the AR process is to reduce
-the large number of past values required by AR processes and to control
-for the autocorrelation which it creates between lagged values of the
+ARIMA models have commonly been used in financial forecasting and are
+popular for observing stock prices and exchange rates due to its power
+and statistical properties (C.-S. Lin, Chiu, and Lin 2012). The ARIMA
+model is attractive as it is tractable and produces good short-term
+forecasts when more than 100 observations are used (Tseng et al. 2001).
+They have frequently been used as a benchmark to compare new forecasting
+techniques that have emerged over time and have yielded satisfactory
+results when predicting exchange rates. Nwankwo (2014) forecasted the
+exchange rate between the Naira and dollar, using Akaike's Information
+Criterion (AIC) as a measure of performance. Diagnostic testing revealed
+that the ARIMA(1,0,0) model was the best fit for the data.
+
+Although the ARIMA model has the advantage of ease of implementation and
+flexibility, it fails to capture the non-linearity and volatility
+present in exchange rate data. Over time, the ARIMA model has evolved to
+cater for a wider variety of data and to compensate for some of its
+shortcomings. Some of the most popular versions of the ARIMA model that
+has been implemented in exchange rate forecasting is the Seasonal ARIMA
+(SARIMA) and Fractional ARIMA (ARFIMA) model.
+
+The SARIMA model was introduced to capture the periodic behaviour of
+data and extends the ARIMA class by including a term for seasonal
+differencing. Etuk, Wokoma, and Moffat (2013) modelled the Naira/CFA
+Franc exchange rate which exhibited monthly seasonality using an
+additive SARIMA model, to demonstrate that it can be a useful fit for
+exchange rate data which displays seasonality. Their results showed that
+the SARIMA model adequately described the variation in the exchange rate
+series.
+
+The ARFIMA model generalises the ARIMA model in that the degree required
+to make the data stationary can assume any real value, and is no longer
+restricted to the integer domain. The ARFIMA model has the ability to
+capture the dependence between observations that are widely spread apart
+in time (Cheung 1993). This makes the model parsimonious since it can
+capture long memory in data as well as short term dynamics (Cheung
+1993). Cheung (1993) fitted the ARFIMA model to examine five exchange
+rates and found that there was strong evidence of long memory in the
+exchange rate time series.
+
+\subsection{Other techniques used to forecast exchange
+rates}\label{other-techniques-used-to-forecast-exchange-rates}
+
+Generalised autoregressive conditional heteroskedasticity (GARCH) models
+were later developed due to the failure of ARIMA models to capture the
+volatility in financial markets (Anastasakis and Mort 2009). Fahimifard
+et al. (2009) applied a GARCH model to the Rial/USD and Rial/EUR to
+compare the forecasts yielded by the GARCH and ARIMA model over varying
+forecast horizons. Their results illustrated that the GARCH model
+outperformed the ARIMA model when using the Root Mean Square Error
+(RMSE), Mean Square Error (MSE) and Mean Absolute Deviation (MAD) as a
+performance criteria.
+
+Over time, financial forecasting methods have moved away from linear
+models like ARIMA and GARCH, to soft computing techniques. These complex
+techniques are non-linear and can fit complex time series more easily
+(Castillo and Melin 2002). Unlike the ARIMA model, soft computing
+techniques do not impose structural assumptions on the model apriori
+(Castillo and Melin 2002). Some of the most commonly used artificial
+intelligence methods used to forecast exchange rate data are Neural
+Networks and Fuzzy Logistic Systems.
+
+Artificial Neural Networks (ANNs) mimic the structure of the brain and
+have had many successful applications in forecasting exchange rates.
+They are data driven, can adapt to non-stationary environments and can
+approximate any continuous function (Khashei and Bijari 2011). In a
+study done by Fahimifard et al. (2009), the ANN was found as an
+effective way to improve the forecasts of exchange rates. Superior
+results were produced when compared to the ARIMA and GARCH model using
+the RMSE, MSE and MAD as a measure of performance.
+
+Fuzzy Logistic Systems (FLSs) were initially developed to solve problems
+involving linguistic terms and have successfully been used in financial
+forecasting (Khashei, Bijari, and Ardali 2009). Fuzzy logic tries to
+imitate human reasoning and the decision-making process and allows for
+finer rather than discrete decisions to be provided. Santos, Costa, and
+Santos Coelho (2007) investigated how well FLSs and ANNs perform
+compared to the traditional ARMA and GARCH model. He examined the
+forecasts of Brazilian exchange rate returns by considering different
+frequencies of the series and comparing their one-step ahead forecasts.
+By analysing accuracy statistics, he found that FLSs and ANNs achieved
+higher returns based on the forecasts they produced. Similar results
+were found by Khashei, Bijari, and Ardali (2009) when he analysed the
+predictive capabilities of FLSs, ANNs, the traditional ARIMA model and a
+Fuzzy ARIMA model.
+
+Although ANNs have been broadly applied in financial forecasting, the
+process of building them is a complex task and there is no consistent
+method of design compared to the traditional Box-Jenkins ARIMA model.
+The performance of ANNs is sensitive to many modelling factors such as
+the number of input nodes included and the size of the training sample
+chosen (Zhang and Hu 1998). Like ANNs, there is no systematic approach
+for designing FLSs and they are only understandable when simple.
+Although FLSs has the advantage over ARIMA models in that they can be
+applied to data with few observations available, it yields acceptable
+rather than accurate results and are more suitable for problems which do
+not require high accuracy.
+
+The traditional ARIMA model produces less superior forecasts than its
+hybrid forms and other complex non-linear techniques, however its
+forecasts are still satisfactory. It is a simple model that is easy to
+implement and has a consistent method of model design and selection.
+ARIMA models are more robust and efficient than complex structural
+models in relation to short-run forecasting. The fact that they have
+been used as the foundation for more advanced models and have commonly
+been used as a benchmark for comparison, justifies it as a good starting
+point to compare it to Facebook's forecasting method, Prophet, that was
+recently released.
+
+\subsection{Forecasting with Prophet}\label{forecasting-with-prophet}
+
+The techniques that have been considered for exchange rate forecasting
+thus far, require the analyst to have vocational knowledge about time
+series. Prophet differs from traditional time series models in that it
+is flexible and can be customised by a large number of non-experts who
+have little knowledge about time series, however have domain knowledge
+about the data generating process. Prophet allows for a large number of
+forecasts to be produced across a variety of problems and consists of a
+robust evaluation system that allows for a large number of forecasts be
+evaluated and compared. This is Facebook's definition of forecasting at
+scale.
+
+Prophet's Bayesian approach to forecasting allows the analyst to
+incorporate their expert knowledge into the model building process and
+has produced significantly improved forecasts compared to the ARIMA
+model. Taylor and Letham (2017) forecasted the number of events on
+Facebook using Prophet. The time series was impacted by holidays, had
+strong multi-period seasonality, and a piecewise trend. The forecasts
+produced by Prophet were compared to common forecasting techniques such
+as exponential smoothing, ARIMA, the seasonal naive, and the naive
+model. While exponential smoothing and the seasonal naive model were
+quite robust, the ARIMA forecasts were fragile. No model besides Prophet
+accounted for the dips around holidays and the upward trend of the time
+series towards later observations. If Prophet produces forecasts that
+are as good as the ARIMA model when forecasting BTC/ZAR, it can be
+compared to more complex forecasting methods that are less tractable
+such as the hybrid models and machine learning techniques seen earlier.
+
+\section{\texorpdfstring{Data \label{Data}}{Data }}\label{data}
+
+The dataset used in this study consists of the daily closing prices of
+BTC/ZAR over the period 24 January 2016 to 17 July 2017. This comprises
+of a total of 541 trading days and was the chosen time period for
+analysis due to constraints in obtaining data over a longer period. The
+data was obtained from Bitcoincharts.
+
+Bitcoin is of specific interest as it presents an interesting parallel
+to traditional exchange rate markets. The cryptocurrency is built on a
+decentralised system and as a result its value cannot be directly
+influenced by a central authority (Fantazzini et al. 2016). In addition,
+the Bitcoin market has attracted attention worldwide and is currently
+the leading cryptocurrency, with awareness and adoption of the currency
+growing over time (Fantazzini et al. 2016). Its novelty makes it a
+highly volatile hence speculative market and provides an opportunity for
+forecasting.
+
+In this study, the analysis of BTC/ZAR forecasts are based on the daily
+continuous log returns. The daily closing prices are transformed into
+returns by taking the log difference at each time t and is calculated as
+follows:
+
+\[ r_t = ln(\frac{p_t}{p_{t-1}}) \] where \(p_t\) represents the closing
+price and \(r_t\) represents the log return for time t = 1,2,.,T.
+
+\section{\texorpdfstring{Forecasting Methods
+\label{Forecasting Methods}}{Forecasting Methods }}\label{forecasting-methods}
+
+\subsection{The ARIMA model}\label{the-arima-model}
+
+The ARIMA model expresses the process \{\(y_t\)\} as a function of the
+weighted average of past values of the process and lagged values of the
+residuals. The weighted average of the past p values of the process
+represents an autoregressive (AR) process of order p.~It feeds back past
+values of the process into the current value, inducing correlation
+between all lags of the process. The weighted average of the q lagged
+residuals represents a moving average (MA) process of order q. The
+purpose of mixing the MA process with the AR process is to reduce the
+large number of past values required by AR processes and to control for
+the autocorrelation which it creates between lagged values of the
 process. The combination of the AR(p) and MA(q) process results in a
 more parsimonious model, and forms a stationary autoregressive moving
 average (ARMA(p,q)) process defined as:
@@ -191,181 +356,19 @@ model, and if d is strictly positive the process requires differencing
 to make it stationary. The ARIMA model can be defined succinctly using
 the backward shift operator B, which shifts the process back by one unit
 of time, and is defined as \(By_t = y_{t-1}\). The ARIMA model has the
-form:
+form (Hyndman and Athanasopoulos 2014):
 
 \[ 
     (1-\sum_{i = 1}^{p} \theta_{i} B^i)(1-B)^dy_t = c + (1 + \sum_{i = 1}^{q} \phi_{i} B^i)e_t \label{eq2} \\ \notag 
 \] where c is a constant and \{\(e_t\)\} is a white noise process with
 zero mean and variance \(\sigma^2\).
 
-ARIMA models have commonly been used in financial forecasting and are
-popular for observing stock prices and exchange rates due to its power
-and statistical properties (C.-S. Lin, Chiu, and Lin 2012). They have
-frequently been used as a benchmark to compare new forecasting
-techniques that have emerged over time. Kamruzzaman and Sarker (2003)
-applied an ARIMA model to forecast the exchange rate between the
-Australian dollar and six other currencies, and used the forecast errors
-as well as the accuracy of the direction of the forecasts to evaluate
-the performance of three Neural Network models. In a similar study,
-Khashei, Bijari, and Ardali (2012) compared the predictive capability of
-their proposed hybrid model consisting of an ARIMA and a Probabilistic
-Neural Network (PNN) to the traditional ARIMA model, and justified the
-use of the ARIMA as a benchmark by claiming that it is the most
-important linear model. Their comparison was made by investigating the
-forecasts between the British pound and US dollar over varying forecast
-horizons. Not only has the ARIMA model been useful as a benchmark, but
-it has also yielded satisfactory results when predicting exchange rates.
-When Nwankwo (2014) forecasted the rate between the Nairo and dollar,
-diagnostic testing revealed that the ARIMA(1,0,0) model was the best fit
-for the data based on Akaike's Information Criterion (AIC).
+\subsection{The Prophet model}\label{the-prophet-model}
 
-The ARIMA model is attractive as it is tractable and produces good
-short-term forecasts when more than 100 observations are used (Tseng et
-al. 2001). Although the ARIMA model has the advantage of ease of
-implementation and flexibility, it fails to capture the non-linearity
-and volatility present in exchange rate data. Over time, the ARIMA model
-has evolved to cater for a wider variety of data and to compensate for
-some of its shortcomings. The most popular versions of the ARIMA model
-that has been implemented in exchange rate forecasting is the Seasonal
-ARIMA (SARIMA) and Fractional ARIMA model (FARIMA).
-
-The SARIMA model was introduced to capture the periodic behaviour of
-data and extends the ARIMA class by including a term for seasonal
-differencing. Etuk, Wokoma, and Moffat (2013) modelled the Naira/CFA
-Franc exchange rate which exhibited monthly seasonality using an
-additive SARIMA model, to demonstrate that it can be a useful fit for
-exchange rate data which displays seasonality. Their results showed that
-the SARIMA model adequately described the variation in the exchange rate
-series. The ARFIMA model generalises the ARIMA model in that the degree
-required to make the data stationary can assume any real value, and is
-no longer restricted to the integer domain. The ARFIMA model has the
-ability to capture the dependence between observations that are widely
-spread apart in time (Cheung 1993). This makes the model more
-parsimonious since it can capture long memory in data as well as short
-term dynamics (Cheung 1993). Cheung (1993) fitted the ARFIMA model to
-examine five exchange rates, and found that there was strong evidence of
-long memory in the exchange rate time series.
-
-Generalised autoregressive conditional heteroskedasticity (GARCH) models
-were later developed in an attempt to capture the volatility in
-financial markets (Anastasakis and Mort 2009). Hsieh (1989) applied a
-GARCH model to investigate five exchange rates and his results showed
-that although the GARCH model outperformed the random walk, some
-non-linear information still remained in the residuals.
-
-\subsection{Other techniques used to forecast exchange
-rates}\label{other-techniques-used-to-forecast-exchange-rates}
-
-Over time, financial forecasting methods have moved away from linear
-models like ARIMA and GARCH, to soft computing techniques. These more
-complex techniques are non-linear and can fit complex time series more
-easily (Castillo and Melin 2002). Unlike the ARIMA model, soft computing
-techniques do not impose structural assumptions on the model apriori
-(Castillo and Melin 2002). Some of the most commonly used artificial
-intelligence methods used to forecast exchange rate data are Neural
-Networks and Fuzzy Logistic Systems.
-
-Artificial Neural Networks (ANNs) have had many successful applications
-in forecasting exchange rates and are more advantageous than other
-non-linear forecasting methods. They are data driven, can adapt to
-non-stationary environments and can approximate any continuous function
-(Khashei and Bijari 2011). In a study done by Fahimifard et al. (2009),
-the ANN was found as an effective way to improve the forecasts of
-exchange rates. Superior results were produced when compared to the
-ARIMA and GARCH model using the root mean square error (RMSE), mean
-square error (MSE) and mean absolute difference as a measure of
-performance. Fuzzy Logistic Systems (FLSs) were initially developed to
-solve problems involving linguistic terms, and have been successfully
-used in financial forecasting (Khashei, Bijari, and Ardali 2009). Fuzzy
-logic tries to imitate human reasoning and the decision-making process
-and allows for finer rather than discrete decisions to be provided.
-Santos, Costa, and Santos Coelho (2007) investigated how well FLSs and
-ANNs perform compared to the traditional ARMA and GARCH model. He
-examined the forecasts of Brazilian exchange rate returns by considering
-different frequencies of the series and comparing their one step-ahead
-forecasts. By analysing accuracy statistics, he found that FLSs and ANNs
-achieved higher returns based on the forecasts they produced. Similar
-results were found by Khashei, Bijari, and Ardali (2009) when he
-analysed the predictive capabilities of FLSs, ANNs, the traditional
-ARIMA model, and a Fuzzy ARIMA model.
-
-Although ANNs have been broadly applied in financial forecasting, the
-process of building them is a complex task and there is no consistent
-method of design compared to the traditional Box-Jenkins ARIMA model.
-Unlike ARIMA models, the performance of ANNs is sensitive to many
-modelling factors such as the number of input nodes included and the
-size of the training sample chosen (Zhang and Hu 1998). Like ANNs there
-is no systematic approach to designing FLSs and they are only
-understandable when simple. Although FLSs has the advantage over ARIMA
-models that they can be applied to data with few observations available,
-it gives acceptable rather than accurate results and are more suitable
-for problems which do not require high accuracy.
-
-\subsection{Hybrid ARIMA Models}\label{hybrid-arima-models}
-
-Over time, many researchers began to think of ways in which to harness
-the advantages of tractable linear models such as the ARIMA model, and
-of more complex non-linear models. By combining the ARIMA model with
-other forecasting methods, the advantages of both forecasting methods
-are leveraged while simultaneously improving their limitations. Some of
-the hybrid models which have commonly been used in exchange rate
-forecasting are the Fuzzy ARIMA and ANN-ARIMA model.
-
-The ARIMA model produces very accurate forecasts over short time
-horizons however it has the limitation of requiring more than 100
-observations of historical data to yield accurate results (Tseng et al.
-2001). In a world that is constantly changing and with the rapid
-advancement of technology, access to large amounts of historical data is
-difficult to obtain. On the contrary, a fuzzy regression model requires
-little historical data however produces wide prediction intervals if
-extreme values are present in the data. The Fuzzy ARIMA model combines
-the ARIMA and fuzzy regression model to exploit the advantages of both
-models while simultaneously overcoming their limitations. Tseng et al.
-(2001) proposed applying a Fuzzy ARIMA model to forecast the exchange
-rate of Taiwan dollars to US dollars to demonstrate the model's
-appropriateness and power. The Fuzzy ARIMA not only produced forecasts
-that were superior to the ARIMA and fuzzy time series models but also
-provided an upper and lower bound which can be used by decision makers
-to determine the best and worst possible situations.
-
-Although ARIMA models are powerful, they require non-stationary data to
-be differenced and impose prior assumptions onto the distribution of the
-data (Ince and Trafalis 2006). In contrast, machine learning techniques
-such as ANNs do not impose any assumptions onto the data generating
-process however, being data-driven, are sensitive to the number of input
-nodes used. The ANN-ARIMA model draws on the strengths of both models
-and overcomes these individual difficulties. Ince and Trafalis (2006)
-created an ANN-ARIMA model by using the ARIMA model to determine the
-number input nodes required by an ANN for three exchange rates. When the
-ANN-ARIMA model was compared to the pure ARIMA model, the hybrid model
-outperformed the ARIMA based on the MSE.
-
-Although the traditional ARIMA models produce less superior forecasts
-than its hybrid forms and other complex non-linear techniques, its
-forecasts are still satisfactory. They are simple models that are easy
-to implement and have a consistent method of model design and selection.
-ARIMA models are also more robust and efficient than complex structural
-models in relation to short-run forecasting. The fact that they have
-been used as the foundation for more advanced models and have commonly
-been used as a benchmark for comparison, justifies it as a good starting
-point to compare it to Facebook's forecasting method, Prophet, that was
-recently released.
-
-\subsection{Forecasting with Prophet}\label{forecasting-with-prophet}
-
-The techniques that have been considered for exchange rate forecasting
-thus far, require the analyst to have vocational knowledge about time
-series. Prophet differs to traditional time series models in that it is
-flexible and can be customised by a large number of non-experts who have
-little knowledge about time series, however have domain knowledge about
-the data generating process. Prophet allows for a large number of
-forecasts to be produced across a variety of problems and consists of a
-robust evaluation system that allows for a large number of forecasts be
-evaluated and compared. This is Facebook's definition of forecasting at
-scale. Prophet is similar to a Generalized Additive Model (GAM) - an
-additive regression model that consists of non-linear and linear
-regression functions applied to predictor variables (Taylor and Letham
-2017). The decomposable model is of the form:
+Prophet is similar to a Generalized Additive Model (GAM) - an additive
+regression model that consists of non-linear and linear regression
+functions applied to predictor variables (Taylor and Letham 2017). The
+decomposable model is of the form:
 
 \[ 
     y(t) = g(t) + s(t) + h(t) + e_t
@@ -377,30 +380,28 @@ exercise and uses backfitting to find the regression functions. This
 allows for the model to be fitted quickly and missing values and large
 outliers to be handled elegantly. The regression model also provides
 model flexibility and allows the analyst to interactively change model
-parameters (Taylor and Letham 2017).
-
-The growth component of Prophet may be modelled as a linear or
-non-linear function of time. Linear growth is modelled by a piecewise
-constant function while non-linear growth is modelled similar to
-population growths which use a logistic growth model (Taylor and Letham
-2017). A time-varying upper limit may be specified for logistic growth,
-at which point the forecasts will saturate. This carrying capacity
-allows the analyst to incorporate their prior knowledge about the
-maximum obtainable growth level such as the total market or population
-size into the model. Prophet accounts for changes in the trajectory of
-this trend by automatically detecting and selecting changepoints in the
-data at which the growth rate is allowed to change. These changepoints
-have a Laplace prior distribution placed on them and its scale parameter
-may be used to adjust the flexibility of the trend and to choose how
-aggressively the model should follow historical trend changes. Analysts
-may also adjust the number of potential changepoints included or
-manually specify their location. This allows non-experts with knowledge
-about events that may affect the growth rate to use the parameter as a
-knob to either increase or decrease the number of changepoints included
-(Taylor and Letham 2017). It also allows for the analyst to add
-changepoints which the automatic selection procedure may have missed or
-remove changepoints when the model is overfitting historical trends
-(Taylor and Letham 2017).
+parameters (Taylor and Letham 2017). The growth component of Prophet may
+be modelled as a linear or non-linear function of time. Linear growth is
+modelled by a piecewise constant function while non-linear growth is
+modelled similar to population growths which use a logistic growth model
+(Taylor and Letham 2017). A time-varying upper limit may be specified
+for logistic growth, at which point the forecasts will saturate. This
+carrying capacity allows the analyst to incorporate their prior
+knowledge about the maximum obtainable growth level such as the total
+market or population size into the model. Prophet accounts for changes
+in the trajectory of this trend by automatically detecting and selecting
+changepoints in the data at which the growth rate is allowed to change.
+These changepoints have a Laplace prior distribution placed on them and
+its scale parameter may be used to adjust the flexibility of the trend
+and to choose how aggressively the model should follow historical trend
+changes. Analysts may also adjust the number of potential changepoints
+included or manually specify their location. This allows non-experts
+with knowledge about events that may affect the growth rate to use the
+parameter as a knob to either increase or decrease the number of
+changepoints included (Taylor and Letham 2017). It also allows for the
+analyst to add changepoints which the automatic selection procedure may
+have missed or remove changepoints when the model is overfitting
+historical trends (Taylor and Letham 2017).
 
 The decomposable form of the model allows for multiple seasonality
 components with different periods to be added to the model. Seasonality
@@ -421,19 +422,6 @@ country-specific lists can then be used for forecasting. Like
 seasonality, a Normal prior distribution is placed on the parameters of
 the holiday component, and the scale parameter can be adjusted by
 analysts to smooth the holidays (Taylor and Letham 2017).
-
-Prophet's Bayesian approach to forecasting allows the analyst to
-incorporate their expert knowledge into the model building process and
-has produced significantly improved forecasts compared to the ARIMA
-model. Taylor and Letham (2017) forecasted the number of events on
-Facebook using Prophet. The time series was impacted by holidays, had
-strong multi-period seasonality, and a piecewise trend. The forecasts
-produced by Prophet were compared to common forecasting techniques such
-as exponential smoothing, ARIMA, the seasonal naïve, and the naïve
-model. While exponential smoothing and the seasonal naïve model were
-quite robust, the ARIMA forecasts were fragile. No model besides Prophet
-accounted for the dips around holidays and the upward trend of the time
-series towards later observations.
 
 Prophet's ability to forecast at scale enables it to model a wide
 variety of data and may be able to adequately fit exchange rate data.
@@ -471,32 +459,6 @@ BTC/ZAR, it can be compared to more complex forecasting methods that are
 less tractable such as the hybrid models and machine learning techniques
 seen earlier.
 
-\section{\texorpdfstring{Data \label{Data}}{Data }}\label{data}
-
-The data set used in this study consists of the daily closing prices of
-BTC/ZAR over the period 24 January 2016 to 17 July 2017. This comprises
-of a total of 541 trading days and was the chosen time period for
-analysis due to constraints in obtaining data over a longer period. The
-data was obtained from Bitcoincharts.
-
-Bitcoin is of specific interest as it presents an interesting parallel
-to traditional exchange rate markets. The cryptocurrency is built on a
-decentralised system and as a result its value cannot be directly
-influenced by a central authority (Fantazzini and Nigmatullin 2016). In
-addition, the Bitcoin market has attracted attention worldwide and is
-currently the leading cryptocurrency, with awareness and adoption of the
-currency growing over time (Fantazzini and Nigmatullin 2016). Its
-novelty makes it a highly volatile hence speculative market and provides
-an opportunity for forecasting.
-
-In this study, the analysis of BTC/ZAR forecasts are based on the daily
-continuous log returns. The daily closing prices are transformed into
-returns by taking the log difference at each time t and is calculated as
-follows:
-
-\[ r_t = ln(\frac{p_t}{p_{t-1}}) \] where \(p_t\) represents the closing
-price and \(r_t\) represents the log return for time t = 1,2,.,T.
-
 \section{\texorpdfstring{Methodology
 \label{Methodology}}{Methodology }}\label{methodology}
 
@@ -509,25 +471,25 @@ methodology is then used to select the correct ARIMA model while
 Prophet's semi-automatic procedure is used for model selection. The
 selected ARIMA and Prophet model are then fitted to the training set and
 rolling window forecasts are made 1 day, 30 days and 90 days ahead. This
-allows us to examine the forecast horizon effect. The Mincer-Zarnowitz
-test is then used to evaluate the forecasts produced by ARIMA and
-Prophet against the test set. Since there is no consensus on which
-accuracy statistic best measures the performance of forecasting
-techniques, the most popular criteria, the Mean Squared Error (MSE) is
-employed. The results obtained from the ARIMA model will be used as a
-benchmark for comparison. This process is then repeated based on data
-which has outliers and missing values present.
+allows us to examine the forecast horizon effect. The Model Confidence
+Set and Mincer-Zarnowitz test is then used to evaluate the forecasts
+produced by ARIMA and Prophet against the test set. Since there is no
+consensus on which accuracy statistic best measures the performance of
+forecasting techniques, the most popular criteria, the Root Mean Squared
+Error (RMSE) is employed. The results obtained from the ARIMA model will
+be used as a benchmark for comparison. This process is then repeated
+based on data which has outliers and missing values present.
 
 \subsection{The Box-Jenkins
 Methodology}\label{the-box-jenkins-methodology}
 
-Box and Jenkins proposed a set of guidelines that can be followed when
-selecting ARIMA models. This systematic procedure to designing ARIMA
-models has made them highly popular (Hibon and Makridakis 1997). It
-consists of a four-stage iterative process in which:
+Box, Jenkins, and Reinsel (1970) proposed a set of guidelines that can
+be followed when selecting ARIMA models. It consists of a four-stage
+iterative process in which:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
+\tightlist
 \item
   The process is either transformed or differenced to de-trend and
   stabilise the variance of the data.
@@ -543,7 +505,7 @@ consists of a four-stage iterative process in which:
 
 If the residuals are not white noise, steps 2-4 are repeated until a
 satisfactory model is identified. On the contrary, if the diagnostic
-check shows that the residuals are random, the developed model will be
+check reveals that the residuals are random, the developed model will be
 the final model used for forecasting.
 
 \subsection{\texorpdfstring{Semi-Automatic Selection
@@ -562,25 +524,24 @@ following default settings:
 \begin{itemize}
 \tightlist
 \item
-  The trend is set to be linear
+  The trend is set to be linear.
 \item
-  The width of the uncertainty intervals is set to 80\%
+  The width of the uncertainty intervals is set to 80\%.
 \item
   Weekly and yearly seasonality are automatically detected and included
   in the model if present
 \item
   The smoothing parameter for holidays and seasonality is set at 10
+  while the smoothing parameter for the trend is set to 0.05.
 \item
-  The smoothing parameter for the trend is set to 0.05
-\item
-  The number of potential changepoints is set to 25
+  The number of potential changepoints is set to 25.
 \end{itemize}
 
 This paper makes use of Prophet's default settings to fit the data,
 however weekly seasonality is included in the model. This allows us to
 account for our prior knowledge about the closing prices of Bitcoin
-which tend to be lower around the weekend however higher mid-week, due
-to fluctuations in trading activity. Furthermore, a linear trend is
+which tend to be lower around the weekend however higher mid-week due to
+fluctuations in trading activity. Furthermore, a linear trend is
 appropriate since Bitcoin does not have an upper limit on its closing
 prices.
 
@@ -591,16 +552,61 @@ forecasting method. In a rolling window forecast, the forecasts are made
 h-steps at a time and the actual observation rather than the predicted
 value is used for the next prediction in the forecast horizon. In this
 way, a poor forecast will not have negative consequences on future
-forecasts to be made, since the observed values will be used to correct
+forecasts to be made since the observed values will be used to correct
 itself for the remaining forecasts (Zhang and Hu 1998). In this paper,
-we first fit the ARIMA and Prophet model to the training set and
-forecast 1 day ahead. We then refit the model to the training set,
-increasing its size by one observation, and the next 1 day ahead
-forecast is made. This process is repeated until all forecasts have been
-made into the test set. The 1 day ahead forecasts are then compared to
-the 1 day ahead observed values in the test set and the error statistics
-are calculated. This procedure is then repeated for the 30 day and 90
-day ahead forecasts.
+the ARIMA and Prophet model is first fitted to the training set and the
+returns are forecasted h-days ahead for h = 1, 30, 90. The size of the
+training set is then increased by one observation and the models are
+refitted. The next h-day ahead return is forecasted and this process is
+repeated until all forecasts have been made into the test set. The h-day
+ahead forecasts are then compared to the h-day ahead observed values in
+the test set and the forecast errors are calculated to determine the
+RMSE.
+
+\subsection{Model Confidence Set}\label{model-confidence-set}
+
+The Model Confidence Set (MCS) procedure developed by Hansen, Lunde, and
+Nason (2011) is a sequential procedure which starts with an initial set
+of models \(M_0\) of size m. The worse model is then eliminated at each
+step until the null hypothesis of equal predictive ability (EPA) fails
+to be rejected for all the models belonging to the set at a given
+confidence level \(1 - \alpha\). This smaller set of models \(M^*\) is
+the superior set of models (SSM) with the best case occurring when the
+SSM consists of a single best model.
+
+The null hypothesis for EPA for a set of models \(M\) is given by:
+\[H_0: \mu_i,_j = 0 \;\;\; \forall \;\; i,j = 1,...,m\]
+
+where \(\mu_i,_j = E[d_i,_j]\) represents the expected loss
+differential, \(d_i,_j,_t = l_i,_t - l_j,_t\) represents the loss
+differential between models \(i\) and \(j\) at time t, and \(l_i,_t\)
+and \(l_j,_t\) are the loss functions associated with model \(i\) and
+\(j\) at time t respectively. This paper makes use of the squared
+forecast error as a loss function, however any arbitrary loss function
+that satisfies the weak stationarity conditions described in Hansen,
+Lunde, and Nason (2011) may be used.\\
+The null hypothesis is tested by constructing the following test
+statistics:
+
+\[t_i,_j = \frac{\bar{d_i,_j}}{\sqrt{\hat{var[\bar{d_i,_j}]}}}\]
+\vspace{1pt} \[ T_R = \max_{i,j\in M} \;\; |t_i,_j|\] where
+\(d_i,_j = m^{-1}\sum_{t=1}^{m}{d_i,_j,_t }\) measures the sample
+average loss differential between model \(i\) and \(j\) and
+\(\hat{var[\bar{d_i,_j}]}\) is estimated through bootstrapping as
+described in Hansen, Lunde, and Nason (2011).
+
+This paper uses a block--bootstrap procedure of 5000 resamples as in
+Hansen, Lunde, and Nason (2011). The block length \(p\) is chosen by
+fitting an AR(p) model to the \(d_i,_j\) terms and determining the
+maximum number of significant AR parameters obtained. While \(t_i,_j\)
+has a t-distribution, \(T_R\) has a non-standard distribution under the
+null hypothesis hence is estimated by implementing a bootstrapping
+procedure similar to that used to estimate \(\hat{var[\bar{d_i,_j}]}\).
+
+The worst model is then eliminated according to an elimination rule
+which is coherent with the calculated t-statistic and is defined as:
+
+\[e_R = \arg max_{i}\bigg(\sup_{j\in M}\frac{\bar{d_i,_j}}{\sqrt{\hat{var[\bar{d_i,_j}]}}}\bigg)\]
 
 \subsection{Mincer-Zarnowitz Approach to Forecast
 Evaluation}\label{mincer-zarnowitz-approach-to-forecast-evaluation}
@@ -608,429 +614,254 @@ Evaluation}\label{mincer-zarnowitz-approach-to-forecast-evaluation}
 The Mincer-Zarnowitz approach to evaluating forecast accuracy is
 commonly used and can be useful when comparing the forecasts produced by
 Prophet and the ARIMA model. Mincer and Zarnowitz (1969) proposed an
-absolute measure to evaluate forecast accuracy which considers the
+absolute measure to evaluate forecast accuracy that considers the
 distance between the actual and predicted values. To analyse the
 absolute errors produced by the forecasts, the observed values \(r_t\)
-are regressed against the predicted values \(r_t\), i.e.
-
-\[r_t = \alpha + \beta\cdot\hat{r_t} + e_t\]
-
-where \(\alpha\) represents the mean distance between the observed and
-predicted values while \(\beta\) represents the correlation between the
-forecasted errors and the predicted values. When alpha = 0 it implies
-that the forecasts are unbiased and do not systematically overestimate
-or underestimate the data. When b=1 it implies that the forecasts are
-efficient and uncorrelated with the forecasted errors. A joint
-hypothesis test of \(H_0: \alpha = 0 \cup \beta = 1\) is performed to
-check the efficiency and bias of the forecasts and the model which
-produces the best results generates superior forecasts.
+are regressed against the predicted values \(\hat{r_t}\), i.e.
+\[r_t = \alpha + \beta\cdot\hat{r_t} + e_t\] where \(\alpha\) represents
+the mean distance between the observed and predicted values while
+\(\beta\) represents the correlation between the forecasted errors and
+predicted values. When \(\alpha = 0\) it implies that the forecasts are
+unbiased and do not systematically overestimate or underestimate the
+data. When \(\beta = 1\) it implies that the forecasts are efficient and
+uncorrelated with the forecasted errors. A joint hypothesis test of
+\(H_0: \alpha = 0 \cup \beta = 1\) is performed to check the efficiency
+and bias of the forecasts and the model which produces the best results
+generates superior forecasts.
 
 \subsection{Evaluation of forecasts based on data with missing values
 and
 outliers}\label{evaluation-of-forecasts-based-on-data-with-missing-values-and-outliers}
 
-The original dataset is modified in order to examine how robust Prophet
-and ARIMA are when fitted to data with missing values and outliers. 20
-values are randomly removed from the training set and 5 outliers are
-randomly inserted in place of existing values. The models are then
-fitted to this ``dirty'' dataset and evaluating of forecasts are carried
-out as before.
+The original dataset is modified in order to examine how robust the
+ARIMA and Prophet model are when faced with missing values and outliers.
+20 values are randomly removed from the training set and 5 outliers are
+randomly inserted in place of existing values. Both models are then
+fitted to this ``dirty'' dataset and the forecasts are evaluated in the
+same way as the ``clean'' dataset.
 
 \section{\texorpdfstring{Results
 \label{Results}}{Results }}\label{results}
 
-\subsection{Evaluation over varying forecast
-horizons}\label{evaluation-over-varying-forecast-horizons}
+\subsection{Evaluation of clean dataset over varying forecast
+horizons}\label{evaluation-of-clean-dataset-over-varying-forecast-horizons}
 
-Although the Box-Jenkins methodology resulted in an ARIMA(0,0,1) model
-being the best fit to the training set, an ARIMA(1,0,0) is employed as
-the benchmark for comparison so that a rolling window forecast may be
-conducted. The AIC of the ARIMA(1,0,0) is marginally higher than that of
-the ARIMA(0,0,1) and analysis of the p-value indicates that the AR
-parameter is statistically significant in the explanation of the
-movement of BTC/ZAR. The Prophet model fitted to the training set
-included a linear trend and weekly seasonality, with all other
-parameters set to the default values as described in section
-\ref{Semi-Automatic Selection}. The automatic-selection procedure for
-ARIMA and Prophet selected the same model as those chosen manually.
+By following the Box-Jenkins methodology, an ARIMA(0,0,1) model was
+found to be the best fit for the clean training set. Making use of a
+mean model would result in a returns forecast of zero in a rolling
+window context. This is due to the white noise behaviour of log returns.
+Hence a decision was made to employ the ARIMA(1,0,0) model instead. The
+ARIMA(1,0,0) model has a marginally higher AIC and an analysis of the
+p-value indicated that the AR parameter is statistically significant in
+the explanation of the movement of BTC/ZAR. The Prophet model fitted to
+the clean training set included a linear trend and weekly seasonality
+with all other parameters set to the default values as described in
+section \ref{Semi-Automatic Selection}. The models chosen manually are
+consistent with the models selected by the automatic-selection procedure
+for ARIMA and Prophet.
 
-\subsubsection{1-step ahead Forecasts}\label{step-ahead-forecasts}
+Table \ref{tab1} displays the MZ results obtained by regressing the test
+set returns against the forecasted returns, the RMSE, and the models
+that are included in the MCS. It is evident that the ARIMA model ranks
+ahead of the Prophet model over all forecast horizons. The MCS p-values
+indicates that both models lie within the 90\% confidence interval at
+the 1 day and 3 month forecast horizon, while the Prophet model is
+eliminated from the MCS at the 1 month forecast horizon. This suggests
+that the ARIMA and Prophet model have equal predictive accuracy at the 1
+day and 3 month forecast horizon, and that the ARIMA model produces
+superior forecasts at the 1 month forecast horizon. Furthermore, the MCS
+p-values indicates that while ARIMA model lies within the 90\%
+confidence interval with certainty across all forecast horizons, the
+Prophet model lies within the 90\% confidence interval 52.44\% of the
+time at the 1 day forecast horizon and 45.78\% of the time at the 3
+month forecast horizon.
 
-Figure 1 depicts the resulting forecasts from fitting both models. The
-forecasts produced by the ARIMA model and Prophet lie within a band
-centred around zero. Both models fail to capture the large movement of
-returns away from zero. The 80\% uncertainty intervals produced by both
-models are approximately the same width and begin to widen as forecasts
-are made further into the test set.
-
-\begin{figure}[htbp]
+\begin{table}[H]
 \centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/1-step ahead forecasts.png}
-\caption{1-step ahead forecasts from the ARIMA(1,0,0) and Prophet model}
-\end{figure}
+\caption{MCS, MZ-test and RMSE results based on clean data \label{tab1}} 
+\scalebox{0.9}{
+\begin{tabular}{cccccccc}
+  \hline
+Forecast & Model & Model & MCS & $\alpha$ & $\beta$ & MZ-test & RMSE \\ 
+ Horizon &  & Rank & p-values &  &  & p-values &  \\ 
+   \hline
+1 & ARIMA & 1 & 1 & 0.009546 & -2.005624 & 0.02545 & 0.04406 \\ 
+   & Prophet & 2 & 0.5244 & 0.013702 & -1.709744 & 0.007152 & 0.04425 \\ 
+   \hline
+30 & ARIMA & 1 & 1 & 0.031320 & -12.736757 & 0.06136 & 0.04459 \\ 
+   & Prophet & 2 & 0.023 * & 0.017169 & -2.621914 & 0.0003773 & 0.04556 \\ 
+   \hline
+90 & ARIMA & 1 & 1 & 0.006012 & -0.938687 & 0.8430658 & 0.04231 \\ 
+   & Prophet & 2 & 0.4578 & 0.006953 & -0.615435 & 0.4086752 & 0.04259 \\ 
+   \hline
+\end{tabular}
+}
+\end{table}
 
-Table 1 displays the MSE and the Mincer-Zarnowitz results obtained from
-regressing the test set returns against the one-step ahead forecasts.
-The intercept estimate is small and positive for ARIMA and Prophet, with
-the intercept for ARIMA being closer to zero than Prophet. This
-indicates that both models systematically underestimate the 1-step ahead
-returns, with ARIMA yielding mean forecasts closer to the observed mean.
-The slope estimate is negative for both models indicating that the
-observed returns are actually the opposite of the suggested forecast.
-The F-test for the joint hypothesis of a unity slope and zero intercept
-is rejected at the 5\% significance level for both models, with the
-p-value for ARIMA being much larger than Prophet. Hence the forecasts
-generated by both ARIMA and Prophet are biased and/or inefficient. The
-MSE produced by both models agree with the Mincer-Zarnowitz results,
-with ARIMA producing a marginally smaller MSE than Prophet.
+The intercept estimate represented by \(\alpha\) is small and positive
+for ARIMA and Prophet across all forecast horizons, with the smallest
+estimates obtained at the longest forecast horizon. This suggests that
+both models systematically underestimates the returns, but to a smaller
+degree at long forecast horizons. The intercept estimate for ARIMA is
+closer to zero compared to Prophet at the 1 day and 3 month forecast
+horizon, indicating that the mean forecasts yielded by ARIMA is closer
+to the observed mean than Prophet. The slope estimate represented by
+\(\beta\) is negative for both models across all forecast horizons,
+indicating that the observed returns are actually the opposite of the
+suggested forecast and that both models fail to capture the explosive
+behaviour of BTC/ZAR.
 
-\begin{figure}[htbp]
+The MZ p-values at the 1 day and 1 month forecast horizon show that the
+joint hypothesis of a unity slope and zero intercept is rejected at the
+10\% significance level for both models. This suggests that the
+forecasts generated by ARIMA and Prophet are biased and/or inefficient.
+Both models only produce unbiased and/or efficient forecasts at the
+longest forecast horizon, with the ARIMA model yielding a considerably
+larger p-value compared to Prophet. The RMSE produced by the ARIMA model
+is marginally smaller than Prophet across all forecasts horizons, with
+the smallest RMSE calculated at the longest forecast horizon. These
+results agree with the results obtained from the MCS and the MZ-test.
+
+\subsection{Evaluation of data with missing values and outliers
+present}\label{evaluation-of-data-with-missing-values-and-outliers-present}
+
+By following the Box-Jenkins methodology, an ARIMA(0,0,3) model was
+found to be the best fit for the dirty training set. A decision was made
+to employ the ARIMA(3,0,0) model instead. The motivation behind this
+choice is the same as that provided in the case of the clean data. The
+ARIMA(3,0,0) model has a marginally higher AIC and an analysis of the
+p-value indicated that the AR parameters are statistically significant
+in the explanation of the movement of BTC/ZAR. The Prophet model fitted
+to the clean training set included a linear trend and weekly seasonality
+with all other parameters set to the default values as described in
+section \ref{Semi-Automatic Selection}. The models chosen manually are
+consistent with the models selected by the automatic-selection procedure
+for ARIMA and Prophet.
+
+Table \ref{tab2} displays the MZ results obtained by regressing the test
+set returns against the forecasted returns, the RMSE and the models that
+are included in the MCS. We observe that the presence of outliers and
+missing values in the data has no effect on the rank of the ARIMA and
+Prophet model. Contrary to the results from the clean data, the Prophet
+model lies within the 90\% confidence interval at the 1 day forecast
+horizon only. This suggests that the ARIMA and Prophet model only have
+equal predictive accuracy at the shortest forecast horizon. The MCS
+p-values indicates that while the ARIMA model always lies within the
+90\% confidence interval with certainty, the Prophet model only lies
+within the confidence interval at the 1 day forecast horizon 41.3\% of
+the time. This differs to the results from the clean data in which the
+Prophet model lies within the 90\% confidence interval 52.44\% of the
+time at the 1 day forecast horizon.
+
+\begin{table}[H]
 \centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 1.png}
-\caption{Mincer-Zarnowitz results for 1-step ahead forecasts}
-\end{figure}
+\caption{MCS, MZ-test and RMSE results based on dirty data \label{tab2}} 
+\scalebox{0.9}{
+\begin{tabular}{cccccccc}
+  \hline
+Forecast & Model & Model & MCS & $\alpha$ & $\beta$ & MZ-test & RMSE \\ 
+ Horizon &  & Rank & p-values &  &  & p-values &  \\ 
+   \hline
+1 & ARIMA & 1 & 1 & 0.011895 & -0.8832 & 0.00003182 & 0.045530 \\ 
+   & Prophet & 2 & 0.413 & 0.014802 & -0.6761 & 0.00000532 & 0.046210 \\ 
+   \hline
+30 & ARIMA & 1 & 1 & 0.114100 & -12.9853 & 0.1075 & 0.044758 \\ 
+   & Prophet & 2 & 0.0016* & 0.014400 & -0.6516 & 0.00000148 & 0.048180 \\ 
+   \hline
+90 & ARIMA & 1 & 1 & -0.226700 & 27.0635 & 0.01294 & 0.042302 \\ 
+   & Prophet & 2 & 0.0336* & -0.009291 & 0.6438 & 0.000764 & 0.045061 \\ 
+   \hline
+\end{tabular}
+}
+\end{table}
 
-\subsubsection{30-steps ahead Forecasts}\label{steps-ahead-forecasts}
-
-Figure 2 illustrates the resulting 30-step ahead forecasts produced from
-fitting ARIMA and Prophet. As in the 1-step ahead case, both models fail
-to capture the large movement of returns away from zero with its
-forecasts lying within a band centred around zero. The 80\% uncertainty
-intervals produced by both models are approximately the same width and
-marginally wider than the uncertainty intervals produced by the 1-step
-ahead forecasts.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/30-step ahead forecasts.png}
-\caption{30-step ahead forecasts from the ARIMA(1,0,0) and Prophet
-model}
-\end{figure}
-
-Table 2 displays the MSE and the Mincer-Zarnowitz results obtained from
-regressing the test set returns against the 30-step ahead forecasts. The
-intercept estimate is small and positive for ARIMA and Prophet, with a
-smaller intercept estimated for Prophet. This indicates that both models
-systematically underestimate the 30-step ahead returns, with Prophet
-yielding mean forecasts closer to the observed mean. The slope estimate
-is large and negative for both models with the slope estimated to be as
-low as -12.74 for ARIMA. This suggests that the observed returns are
-actually the opposite of the proposed forecast. The F-test for the joint
-hypothesis of a unity slope and zero intercept is rejected at the 5\%
-significance level for Prophet only. The p-value of 0.0614 from the
-joint hypothesis test is slightly significant for ARIMA. Hence the
-forecasts generated by Prophet are biased and/or inefficient while the
-forecasts generated by ARIMA are unbiased and/or efficient. The MSE
-produced by both models agree with the Mincer-Zarnowitz results, with
-ARIMA producing a marginally smaller MSE than Prophet.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 2.png}
-\caption{Mincer-Zarnowitz results for 30-step ahead forecasts}
-\end{figure}
-
-\subsubsection{90-steps ahead Forecasts}\label{steps-ahead-forecasts-1}
-
-Figure 3 illustrates the 90-step ahead forecasts produced by ARIMA and
-Prophet. Both models fail to capture large movement of returns away from
-zero as in the case of the 1-step ahead and 30-step ahead forecasts. The
-80\% uncertainty intervals produced by both models are approximately the
-same width and are marginally narrower than the uncertainty intervals
-produced by the one-step ahead and 30-step ahead forecasts.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/90-steps ahead forecasts.png}
-\caption{90-step ahead forecasts from the ARIMA(1,0,0) and Prophet
-model}
-\end{figure}
-
-Table 3 presents the MSE and the Mincer-Zarnowitz results obtained from
-regressing the test set returns against the 90-step ahead forecasts. The
-intercept estimate is very small and positive for ARIMA and Prophet,
-with a marginally smaller intercept estimated for ARIMA. This indicates
-that both models systematically underestimate the 90-step ahead returns,
-with ARIMA yielding mean forecasts closer to the observed mean. The
-slope estimate is small and negative for both models with the slope
-estimated for ARIMA lying closer to -1. This suggests that the observed
-90-steps ahead returns are actually the opposite of the proposed
-90-steps ahead forecasts. The F-test for the joint hypothesis of a unity
-slope and zero intercept fails to be rejected at the 5\% significance
-level for both ARIMA and Prophet, with the p-value from the test being
-much larger for ARIMA. Hence the forecasts generated by Prophet and
-ARIMA are unbiased and/or efficient. The MSE produced by both models
-agree with the Mincer-Zarnowitz results, with ARIMA producing a
-marginally smaller MSE than Prophet.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 3.png}
-\caption{Mincer-Zarnowitz results for 90-step ahead forecasts}
-\end{figure}
-
-\subsubsection{Comparison over varying forecast
-horizons}\label{comparison-over-varying-forecast-horizons}
-
-Table 4 and 5 compares the p-values obtained from the Mincer-Zarnowitz
-tests and the MSE of the forecasts produced by ARIMA and Prophet over
-the three forecast horizons. In comparing the forecasting accuracy of
-the ARIMA model over the three forecast horizons, we observe that the
-p-value gets more significant as the forecast horizon gets longer. This
-is in contrast to the MSE of the ARIMA forecasts which is smaller at the
-shortest and longest forecast horizons. In comparing the forecasting
-accuracy of Prophet, we find that the p-value is more significant for
-the shortest and longest forecast horizon. This agrees with the MSE of
-the Prophet forecasts which is smaller at the longest and shortest
-forecast horizon. Both ARIMA and Prophet generate forecasts with the
-smallest MSE and the most significant p-value at the longest forecast
-horizon. In comparing the forecasting accuracy of ARIMA and Prophet over
-the three forecast horizons, we notice that the p-value obtained from
-the Mincer-Zarnowitz results is more significant for ARIMA than Prophet
-at every forecast horizon. This echoes the results obtained from the MSE
-which is marginally smaller for ARIMA than Prophet over all forecast
-horizons.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 4.png}
-\caption{Mincer-Zarnowitz results for all forecast horizons}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 5.png}
-\caption{MSE for all forecast horizons}
-\end{figure}
-
-\subsection{Evaluation on data with missing values and outliers
-present}\label{evaluation-on-data-with-missing-values-and-outliers-present}
-
-By following the Box-Jenkins methodology for selection of an ARIMA
-model, an ARIMA(3,0,0) was employed to fit the training set which
-included missing values and outliers. Although the ARIMA(0,0,3) had a
-slightly smaller AIC, a decision was made to use the ARIMA(3,0,0)
-instead so that a rolling window forecast may be used. Analysis of the
-AR parameters indicate that they are statistically significant in the
-explanation of the movement of BTC/ZAR. The Prophet model fitted to the
-training set included a linear trend and weekly seasonality. All other
-parameters were set to Prophet's default values as described in section
-\ref{Semi-Automatic Selection}. The automatic-selection procedure for
-Prophet and ARIMA selected the same models as those chosen manually.
-
-\subsubsection{1-step ahead Forecasts}\label{step-ahead-forecasts-1}
-
-Table 6 shows the MSE of the forecasts generated by ARIMA and Prophet
-and the Mincer-Zarnowitz results obtained from regressing the test set
-returns against the 1-step ahead returns forecasted. We observe that a
-positive intercept is estimated in the case of ARIMA and Prophet,
-indicating that both models systematically underestimate the 1-step
-ahead returns. The intercept estimated for ARIMA is smaller than
-Prophet, indicating that the mean forecasted returns yielded by ARIMA is
-closer to the mean observed returns. The intercept estimates of 0.011895
-and 0.014802 for ARIMA and Prophet respectively are larger than the
-intercept estimates of 0.009546 and 0.013702, which was based on the
-``clean'' dataset. This suggests that both models systematically
-underestimates the returns more when there are missing values and
-outliers present in the data.
-
-We also observe that the slope estimate is small and negative for both
-models with the slope estimated for ARIMA lying closer to -1. This
-suggests that the observed 1-step ahead returns are actually the
-opposite of the proposed 1-step ahead forecasts. The slope estimates of
--0.883228 and -0.676132 for ARIMA and Prophet respectively are less
-steep than the slope estimates of -2.005624 and -1.709744, which was
-based on the evaluation of data that had no values missing or outliers
-present.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 6.png}
-\caption{Mincer-Zarnowitz results for 1-step ahead forecasts}
-\end{figure}
+We notice that a positive intercept and negative slope is still
+estimated at the 1 day and 1 month forecast horizon when the data is
+dirty. The intercept estimates are larger than the case of the clean
+data, suggesting that the biasness of the forecasts yielded by both
+models increases when there are outliers and missing values present in
+the data. Contrary to the results from the clean data, Prophet's
+intercept estimate lies closer to zero at the 1 month and 3 month
+forecast horizon. This indicates that the mean forecasted returns
+yielded by Prophet is closer to the mean observed returns when outliers
+and missing values are present in the data. The negative intercept and
+positive slope estimated for the 3 month horizon contrasts with the
+positive intercept and negative slope estimated in the case of the clean
+data. This shows that although the forecasts produced by both models are
+systematically overestimated at long forecast horizons when the data is
+dirty, they are no longer the opposite of the observed returns.
 
 The p-values obtained from the F-test for the joint hypothesis of a
 unity slope and zero intercept is approximately zero for ARIMA and
-Prophet, with the p-value for Prophet lying closer to zero than ARIMA.
-The null hypothesis is thus rejected at the 1\% significance level,
-indicating that the forecasts generated by Prophet and ARIMA are biased
-and/or inefficient. The MSE produced by both models agree with the
-Mincer-Zarnowitz results, with ARIMA producing a marginally smaller MSE
-than Prophet. The results obtained from evaluating the forecasting
-accuracy of ARIMA and Prophet based on the ``clean'' dataset show
-similar findings, however led to a smaller MSE of 0.001942 and 0.001958
-and a more significant p-value of 0.025449 and 0.007152 for ARIMA and
-Prophet respectively.
-
-\subsubsection{30-steps ahead Forecasts}\label{steps-ahead-forecasts-2}
-
-Table 7 shows the MSE of the forecasts produced by ARIMA and Prophet and
-the Mincer-Zarnowitz results obtained from regressing the test set
-returns against the 30-step ahead returns forecasted. We observe that a
-positive intercept is estimated in the case of ARIMA and Prophet,
-indicating that both models systematically underestimate the 30-step
-ahead returns. The intercept estimated for ARIMA is larger than Prophet,
-indicating that the mean forecasted returns yielded by Prophet is closer
-to the mean observed returns. The intercept estimate of 0.11414 for
-ARIMA is larger than the estimate of 0.031320 which was based on the
-evaluation of the ``clean'' dataset. This suggests that the ARIMA model
-underestimates the returns more when there are missing values and
-outliers present in the data. The intercept estimate of 0.014396 for
-Prophet is less than the estimate of 0.017169 which was based on the
-evaluation of data that had no values missing or outliers present. This
-suggests that Prophet underestimates the returns less when there are
-missing values and outliers present in the data.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 7.png}
-\caption{Mincer-Zarnowitz results for 30-step ahead forecasts}
-\end{figure}
-
-We also observe that the slope estimate is large and negative for ARIMA
-and small and negative for Prophet. This suggests that the observed
-30-step ahead returns are actually the opposite of the proposed 30-step
-ahead forecasts. The slope estimate of -12.985335 for ARIMA is more
-steep than the slope estimate of -12.736757 which was based on the
-evaluation of data that had no values missing or outliers present. This
-suggests that the efficiency of the forecasted returns deteriorates when
-there are missing values and outliers present in the data. The slope
-estimate of -0.65161 for Prophet is less steep than the estimate
--2.621914, which was based on the evaluation of data that had no values
-missing or outliers present. This suggests that the efficiency of the
-forecasted returns improve when there are missing values and outliers
-present in the data.
-
-The p-value obtained from the F-test for the joint hypothesis of a unity
-slope and zero intercept is approximately zero for Prophet. The null
-hypothesis is thus rejected at the 1\% significance level, indicating
-that the 30-step ahead forecasts generated by Prophet are biased and/or
-inefficient. The p-value of 0.107532 for ARIMA is significant at the 5\%
-level, suggesting at the 30-step ahead forecasts produced by ARIMA are
-unbiased and/or efficient. MSE produced by both models agree with the
-Mincer-Zarnowitz results, with ARIMA producing a smaller MSE than
-Prophet. The results obtained from evaluating the forecasting accuracy
-of ARIMA and Prophet based on the ``clean'' dataset, led to a more
-significant p-value of 0.000377 for Prophet only, and a smaller MSE of
-0.001988 and 0.002075 for ARIMA and Prophet respectively.
-
-\subsubsection{90-steps ahead Forecasts}\label{steps-ahead-forecasts-3}
-
-Table 8 shows the MSE of the forecasts produced by ARIMA and Prophet and
-the Mincer-Zarnowitz results obtained from regressing the test set
-returns against the 90-step ahead returns forecasted. We observe that a
-negative intercept is estimated in the case of ARIMA and Prophet,
-indicating that both models systematically overestimate the 90-step
-ahead returns. The intercept estimated for Prophet lies closer to zero,
-indicating that the mean forecasted returns yielded by Prophet is closer
-to the mean observed returns. This is in contrast to the positive
-intercepts that were estimated based on the data that had no values
-missing or outliers present.
-
-We also observe that the slope estimate is large and positive for ARIMA
-however small and positive for Prophet. This is in contrast to the small
-and negative slope estimates which were based on the evaluation of data
-that had no values missing or outliers present.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 8.png}
-\caption{Mincer-Zarnowitz results for 90-step ahead forecasts}
-\end{figure}
-
-The p-values obtained from the F-test for the joint hypothesis of a
-unity slope and zero intercept are insignificant for ARIMA and Prophet,
-with the p-value for Prophet lying close to zero. The null hypothesis is
-thus rejected at the 5\% significance level, indicating that the
-90-steps ahead forecasts generated by Prophet and ARIMA are biased
-and/or inefficient. The MSE produced by both models agree with the
-Mincer-Zarnowitz results, with ARIMA producing a marginally smaller MSE
-than Prophet. The results obtained from evaluating the forecasting
-accuracy of ARIMA and Prophet based on data which had no missing values
-or outliers present contrasts these findings, with a p-value of 0.843066
-and 0.408675 for ARIMA and Prophet respectively.
-
-\subsubsection{Comparison over varying forecast
-horizons}\label{comparison-over-varying-forecast-horizons-1}
-
-Table 9 and 10 compares the p-values obtained from the Mincer-Zarnowitz
-tests and the MSE of the forecasts produced by ARIMA and Prophet over
-the three forecast horizons. In comparing the forecasting accuracy of
-the ARIMA model over the three forecast horizons, we observe that the
-p-value is more significant at the longer forecast horizons. This agrees
-with the MSE of the ARIMA forecasts which is smaller at the longer
-forecast horizons. In comparing the forecasting accuracy of Prophet, we
-find that the p-value is more significant for the longest forecast
-horizon. This agrees with the MSE of the Prophet forecasts which is
-smaller at the longest forecast horizon.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 9.png}
-\caption{Mincer-Zarnowitz results for all forecast horizons}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{C:/Users/Fiona/Documents/R/UCT_hons_proj/Draft/Figures/Evaluation of Prophet and ARIMA forecasts/Table 10.png}
-\caption{MSE for all forecast horizons}
-\end{figure}
-
-In comparing the forecasting accuracy of ARIMA and Prophet over the
-three forecast horizons, we notice that the p-value obtained from the
-Mincer-Zarnowitz results is more significant for ARIMA than Prophet at
-every forecast horizon. This echoes the results obtained from the MSE
-which is marginally smaller for ARIMA than Prophet over all forecast
-horizons.
+Prophet across all forecast horizons, with the p-value for Prophet lying
+closer to zero than ARIMA. The null hypothesis is thus rejected at the
+10\% significance level, indicating that the forecasts generated by
+Prophet and ARIMA are always biased and/or inefficient. This contrasts
+with the clean data which generated unbiased and/or efficient forecasts
+at the longest forecast horizon. The RMSE produced by both models agrees
+with the MZ-test and MCS results, with ARIMA producing a marginally
+smaller RMSE than Prophet across all forecast horizons, and the RMSE
+being larger than the case of the clean data.
 
 \section{\texorpdfstring{Discussion and Conclusions
 \label{Discussion and Conclusions}}{Discussion and Conclusions }}\label{discussion-and-conclusions}
 
-The results show a clear difference in the effect of the forecast
-horizon in the case of the clean data. The results based on the MSE and
-the p-value obtained from the Mincer-Zarnowitz test surprisingly show
-that the ARIMA model produces superior forecasts of the returns at the
-longest forecast horizon. Similarly, Prophet produces superior forecasts
-of the returns at the longest forecast horizon. We notice that although
-the ARIMA model outperforms Prophet at every forecast horizon, the
-difference between the MSE's of the forecasts generated by both models
-is insignificant. Furthermore, the Mincer-Zarnowitz p-values for both
+The results show a clear difference in the predictive accuracy of the
+ARIMA and Prophet model in addition to the forecast horizon effect. The
+ARIMA model ranks ahead of Prophet when forecasting the returns of
+BTC/ZAR across all forecast horizons. These results hold true
+irrespective of whether there are missing values and outliers present in
+the data. Nevertheless, it is reassuring to see that both models have
+equal predictive accuracy when forecasting at short and long forecast
+horizons when the data is clean and at short forecast horizons when the
+data is dirty. Furthermore, the Mincer-Zarnowitz p-values for both
 models are significant at the same forecast horizons, suggesting that
 the efficiency and biasness of the return forecasts yielded by ARIMA and
-Prophet are synchronized at each forecast horizon. If a small amount of
-predictive accuracy is willing to be sacrificed by the analyst in the
-forecasting of BTC/ZAR, it might be useful to employ Prophet instead of
-ARIMA. This would enable traders with expert knowledge about Bitcoin,
-however no statistical knowledge about forecasting models, to
-incorporate their domain knowledge into the Prophet model through its
-intuitively adjustable parameters. Furthermore, as more information
-about events that may affect the price of Bitcoin becomes available, it
-may be included in the model and could potentially change the predictive
-accuracy of Prophet.
+Prophet are synchronized at each forecast horizon. Hence, if the analyst
+is engaged in short-term or long-term trading, they could choose to
+employ the Prophet model instead of the ARIMA model. This would allow
+them to produce return forecasts that are as good as the ARIMA model,
+without having any expert knowledge about model building and selection.
+It would also provide them with the flexibility to customise the model
+to suit their needs and incorporate their domain knowledge about BTC/ZAR
+through the model's intuitively adjustable parameters. If the analyst is
+interested in generating unbiased and/or efficient forecasts with the
+least amount of forecast error, they could utilise either model, however
+should only forecast BTC/ZAR returns over long forecast horizons with
+data that do not include any outliers or missing values.
 
-The results based on the unclean data show that both ARIMA and Prophet
-are sensitive to the presence of outliers and missing values in addition
-to the forecast horizon. We observe that Prophet yields superior
-forecasts at the longest forecast horizon. Although the MSE suggests
-that the ARIMA model produces forecasts with minimal error at the
-longest forecast horizon, analysis of the p-value indicates that the
-forecasts are efficient and/or unbiased at 30-steps ahead only. It is
-evident that Prophet produces inferior results in comparison to the
-ARIMA model over all forecast horizons. This is unexpected as Prophet is
-said to be robust to the presence of outliers and missing values in the
-data, without the need for interpolation. We also notice that the
-forecasts produced by both models deteriorates when there are missing
-values and outliers present in the data, with the only efficient and/or
-unbiased forecasts yielded by the ARIMA model at a forecast horizon of
-30 days.
+The results from the dirty data show that the ARIMA and Prophet model
+are sensitive to the presence of outliers and missing values, with both
+models producing unbiased and/or inefficient forecasts and higher RMSEs
+across all forecast horizons. This is disappointing as Prophet is said
+to be robust when faced with outliers and can handle missing values
+without the need for interpolation unlike the ARIMA model. Since both
+models have equal predictive accuracy at the shortest forecast horizon,
+an analyst engaged in short-term trading who has no knowledge on how to
+pre-process BTC/ZAR data before forecasting, could apply the Prophet
+model as it would provide them with flexibility and ease of
+implementation without sacrificing any predictive accuracy.
 
-The limitation of this study is that it looks specifically at BTC/ZAR.
-Different results may emerge for fiat currencies or the exchange rate
-between Bitcoin with other currencies. Hence caution should be exercised
-when generalising these results to other exchange rates. As a point of
-further research, more complex techniques such as neural networks could
-be used as a benchmark for comparison when evaluating the forecasts
-produced by Prophet.
+Although the Prophet model was eliminated from the Model Confidence Set
+at other forecast horizons, these results might change as more data and
+information about events which might impact the price of BTC/ZAR becomes
+available and is incorporated into the Prophet model. Furthermore, the
+RMSE shows that the difference between the forecast errors of ARIMA and
+Prophet is marginal, even in the case where both models don't have equal
+predictive accuracy. Hence, if the analyst is willing to sacrifice a
+small amount of predictive accuracy in return for the tractability and
+ease of implementation which Prophet provides, then they might favour
+Prophet over the ARIMA model.
+
+The attractive features of Prophet were not fully utilised in this paper
+due to the stationarity of log returns. Different results may emerge
+when forecasting the direction of returns or closing prices.
+Furthermore, the reader should exercise caution when generalising these
+results to other exchange rate data or to exchange rates which involve
+fiat currencies as results may differ. As a point of further research,
+more complex techniques such as Neural Networks could be used as a
+benchmark for comparison when evaluating the forecasts produced by
+Prophet.
 
 \newpage
 
@@ -1048,6 +879,10 @@ Anastasakis, Leonidas, and Neil Mort. 2009. ``Exchange Rate Forecasting
 Using a Combined Parametric and Nonparametric Self-Organising Modelling
 Approach.'' \emph{Expert Systems with Applications} 36 (10). Elsevier:
 12001--11.
+
+\hypertarget{ref-box1970}{}
+Box, George EP, Gwilym M Jenkins, and G Reinsel. 1970. ``Forecasting and
+Control.'' \emph{Time Series Analysis} 3: 75.
 
 \hypertarget{ref-castillo2002}{}
 Castillo, Oscar, and Patricia Melin. 2002. ``Hybrid Intelligent Systems
@@ -1071,20 +906,19 @@ Fahimifard, SM, Masuod Homayounifar, M Sabouhi, and AR Moghaddamnia.
 2009. ``Comparison of Anfis, Ann, Garch and Arima Techniques to Exchange
 Rate Forecasting.'' \emph{Journal of Applied Sciences} 9 (20): 3641--51.
 
-\hypertarget{ref-spyros1997}{}
-Hibon, Michael, and Spyros Makridakis. 1997. ``ARMA Models and the
-Box--Jenkins Methodology.'' John Wiley \& Sons, Ltd.
+\hypertarget{ref-fantazzini2016}{}
+Fantazzini, Dean, Erik Nigmatullin, Vera Sukhanovskaya, and Sergey
+Ivliev. 2016. ``Everything You Always Wanted to Know About Bitcoin
+Modelling but Were Afraid to Ask.''
 
-\hypertarget{ref-ince2006}{}
-Ince, Huseyin, and Theodore B Trafalis. 2006. ``A Hybrid Model for
-Exchange Rate Prediction.'' \emph{Decision Support Systems} 42 (2).
-Elsevier: 1054--62.
+\hypertarget{ref-hansen2011}{}
+Hansen, Peter R, Asger Lunde, and James M Nason. 2011. ``The Model
+Confidence Set.'' \emph{Econometrica} 79 (2). Wiley Online Library:
+453--97.
 
-\hypertarget{ref-kamruzzaman2003}{}
-Kamruzzaman, Joarder, and Ruhul A Sarker. 2003. ``Forecasting of
-Currency Exchange Rates Using Ann: A Case Study.'' In \emph{Neural
-Networks and Signal Processing, 2003. Proceedings of the 2003
-International Conference on}, 1:793--97. IEEE.
+\hypertarget{ref-hyndman2014}{}
+Hyndman, Rob J, and George Athanasopoulos. 2014. \emph{Forecasting:
+Principles and Practice}. OTexts.
 
 \hypertarget{ref-khashei2011}{}
 Khashei, Mehdi, and Hehdi Bijari. 2011. ``Exchange Rate Forecasting
@@ -1097,11 +931,6 @@ Khashei, Mehdi, Mehdi Bijari, and Gholam Ali Raissi Ardali. 2009.
 ``Improvement of Auto-Regressive Integrated Moving Average Models Using
 Fuzzy Logic and Artificial Neural Networks (Anns).''
 \emph{Neurocomputing} 72 (4). Elsevier: 956--67.
-
-\hypertarget{ref-khashei2012}{}
----------. 2012. ``Hybridization of Autoregressive Integrated Moving
-Average (Arima) with Probabilistic Neural Networks (Pnns).''
-\emph{Computers \& Industrial Engineering} 63 (1). Elsevier: 37--45.
 
 \hypertarget{ref-lin2012}{}
 Lin, Chiun-Sin, Sheng-Hsiung Chiu, and Tzu-Yu Lin. 2012. ``Empirical

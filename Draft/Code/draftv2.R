@@ -335,7 +335,7 @@ plot_one_step_arima <- ggplot(ExchangeRates, aes(x = TradeDate, y = DailyLogRetu
   xlab("Trade Date") +
   ylab("Daily Log Returns") +
   theme_minimal() + 
-  labs(title  = paste("One-step ahead forecasts from ARIMA(1,0,0)"))
+  labs(title  = paste("1-step ahead forecasts from ARIMA(1,0,0)"))
 
 # Plot of 1 step-ahead Prophet forecasts
 plot_one_step_proph <- ggplot(ExchangeRates, aes(x = TradeDate, y = DailyLogReturns)) +
@@ -345,11 +345,31 @@ plot_one_step_proph <- ggplot(ExchangeRates, aes(x = TradeDate, y = DailyLogRetu
   xlab("Trade Date") +
   ylab("Daily Log Returns") +
   theme_minimal() + 
-  labs(title  = paste("One-step ahead Prophet forecasts"))
+  labs(title  = paste("1-step ahead Prophet forecasts"))
 
 grid.arrange(plot_one_step_arima,
              plot_one_step_proph,
              nrow = 2)
+
+# One-step Model Confidence Set
+library(MCS)
+
+# One-step squared error losses
+one_step_arima_losses <- LossLevel(realized = One_Step_Results %>% select(actual),
+                                   evaluated = One_Step_Results %>% select(arima_forecast), 
+                                   which = "SE")
+
+one_step_proph_losses <- LossLevel(realized = One_Step_Results %>% select(actual),
+                                   evaluated = One_Step_Results %>% select(proph_forecast), 
+                                   which = "SE")
+
+one_step_losses <- data.frame(one_step_arima_losses, one_step_proph_losses)
+
+one_step_losses <- one_step_losses %>% 
+  select(ARIMA = arima_forecast, Prophet = proph_forecast)
+
+# One-step MCS
+one_step_MCS <- MCSprocedure(Loss = one_step_losses, alpha = 0.10, B = 5000, statistic = "TR")
 
 # Forecasting 30-steps ahead for 6 month out-of-sample 
 h = 30
@@ -438,6 +458,25 @@ grid.arrange(plot_Thirty_step_arima,
              plot_Thirty_step_proph,
              nrow = 2)
 
+# Thirty-step Model Confidence Set
+
+# Thirty-step squared error losses
+thirty_step_arima_losses <- LossLevel(realized = Thirty_Step_Results %>% select(actual),
+                                   evaluated = Thirty_Step_Results %>% select(arima_forecast), 
+                                   which = "SE")
+
+thirty_step_proph_losses <- LossLevel(realized = Thirty_Step_Results %>% select(actual),
+                                   evaluated = Thirty_Step_Results %>% select(proph_forecast), 
+                                   which = "SE")
+
+thirty_step_losses <- data.frame(thirty_step_arima_losses, thirty_step_proph_losses)
+
+thirty_step_losses <- thirty_step_losses %>% 
+  select(ARIMA = arima_forecast, Prophet = proph_forecast)
+
+# Thirty-step MCS
+thirty_step_MCS<- MCSprocedure(Loss = thirty_step_losses, alpha = 0.10, B = 5000, statistic = "TR")
+
 # Forecasting 90-steps ahead for 6 month out-of-sample 
 h = 90
 
@@ -525,7 +564,27 @@ grid.arrange(plot_ninety_step_arima,
              plot_ninety_step_proph,
              nrow = 2)
 
-# ------ Evaluating forecast accuracy of arima models
+# Ninety-step Model Confidence Set
+
+# Ninety-step squared error losses
+ninety_step_arima_losses <- LossLevel(realized = Ninety_Step_Results %>% select(actual),
+                                      evaluated = Ninety_Step_Results %>% select(arima_forecast), 
+                                      which = "SE")
+
+ninety_step_proph_losses <- LossLevel(realized = Ninety_Step_Results %>% select(actual),
+                                      evaluated = Ninety_Step_Results %>% select(proph_forecast), 
+                                      which = "SE")
+
+ninety_step_losses <- data.frame(ninety_step_arima_losses, ninety_step_proph_losses)
+
+ninety_step_losses <- ninety_step_losses %>% 
+  select(ARIMA = arima_forecast, Prophet = proph_forecast)
+
+# Ninety-step MCS
+ninety_step_MCS <- MCSprocedure(Loss = ninety_step_losses, alpha = 0.10, B = 5000, statistic = "TR")
+
+
+# ------ Mincer Zarnowitz test and error statistics for ARIMA model
 
 library(broom)
 library(car)
@@ -573,7 +632,7 @@ one_step_arima_mae<- one_step_arima_accuracy %>% select(MAE)
 # MAE = 0.03058991
 
 one_step_arima_mape<- one_step_arima_accuracy %>% select(MAPE)
-# MAE = 142.3605
+# MAPE = 142.3605
 
 # Mincer-Zarnowitz test for 30-step ahead forecasts:
 
@@ -665,7 +724,7 @@ ninety_step_arima_mae <- ninety_step_arima_accuracy %>% select(MAE)
 ninety_step_arima_mape <- ninety_step_arima_accuracy %>% select(MAPE)
 # MAPE = 169.4606
 
-# ------ Evaluating forecast accuracy of Prophet
+# ------ Mincer Zarnowitz test and error statistics for Prophet
 
 # Mincer-Zarnowitz test for 1-step forecast:
 
