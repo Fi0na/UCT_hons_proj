@@ -283,10 +283,10 @@ have little knowledge about time series, however have domain knowledge
 about the data generating process. Prophet allows for a large number of
 forecasts to be produced across a variety of problems and consists of a
 robust evaluation system that allows for a large number of forecasts be
-evaluated and compared. This is Facebookâs definition of forecasting
-at scale.
+evaluated and compared. This is Facebook's definition of forecasting at
+scale.
 
-Prophetâs Bayesian approach to forecasting allows the analyst to
+Prophet's Bayesian approach to forecasting allows the analyst to
 incorporate their expert knowledge into the model building process and
 has produced significantly improved forecasts compared to the ARIMA
 model. Taylor and Letham (2017) forecasted the number of events on
@@ -379,7 +379,7 @@ decomposable model is of the form:
 \] where the components of the model represent the growth, seasonality
 and holiday respectively, and \(e_t\) is white noise.
 
-Prophet, like the GAM, frames the forecasting problem as a curve fitting
+Prophet, like the GAM, frames the forecasting problem as a curve-fitting
 exercise and uses backfitting to find the regression functions. This
 allows for the model to be fitted quickly and missing values and large
 outliers to be handled elegantly. The regression model also provides
@@ -427,13 +427,13 @@ seasonality, a Normal prior distribution is placed on the parameters of
 the holiday component, and the scale parameter can be adjusted by
 analysts to smooth the holidays (Taylor and Letham 2017).
 
-Prophetâs ability to forecast at scale enables it to model a wide
+Prophet's ability to forecast at scale enables it to model a wide
 variety of data and may be able to adequately fit exchange rate data.
 Its non-linear components could capture the non-linearity present in
 exchange rates. In contrast, the ARIMA model is a linear function of
 previous observations and lagged residuals and fails to capture the
 non-linearity inherent in exchange rate data. Prophet performs well on
-data with strong multiple âhuman scaleâ seasonalities and historical
+data with strong multiple ``human scale'' seasonalities and historical
 trend changes. This differs to the ARIMA model which requires the data
 to be de-trended and the variance stabilised before the model can be
 fitted. Hence Prophet could model the weekly seasonality of closing
@@ -472,7 +472,7 @@ training set and test set. The training set starts on the 24th January
 2016 and ends on the 16th January 2017, while the test set starts on the
 17th January 2017 and ends on the 17th July 2017. The Box-Jenkins
 methodology is then used to select the correct ARIMA model while
-Prophetâs semi-automatic procedure is used for model selection. The
+Prophet's semi-automatic procedure is used for model selection. The
 selected ARIMA and Prophet model are then fitted to the training set and
 rolling window forecasts are made 1 day, 30 days and 90 days ahead. This
 allows us to examine the forecast horizon effect. The Model Confidence
@@ -541,7 +541,7 @@ following default settings:
   The number of potential changepoints is set to 25.
 \end{itemize}
 
-This paper makes use of Prophetâs default settings to fit the data,
+This paper makes use of Prophet's default settings to fit the data,
 however weekly seasonality is included in the model. This allows us to
 account for our prior knowledge about the closing prices of Bitcoin
 which tend to be lower around the weekend however higher mid-week due to
@@ -558,9 +558,9 @@ value is used for the next prediction in the forecast horizon. In this
 way, a poor forecast will not have negative consequences on future
 forecasts to be made since the observed values will be used to correct
 itself for the remaining forecasts (Zhang and Hu 1998). In this paper,
-the ARIMA and Prophet model is first fitted to the training set and the
-returns are forecasted h-days ahead for h = 1, 30, 90. The size of the
-training set is then increased by one observation and the models are
+the ARIMA and Prophet models are first fitted to the training set and
+the returns are forecasted h-days ahead for h = 1, 30, 90. The size of
+the training set is then increased by one observation and the models are
 refitted. The next h-day ahead return is forecasted and this process is
 repeated until all forecasts have been made into the test set. The h-day
 ahead forecasts are then compared to the h-day ahead observed values in
@@ -612,14 +612,17 @@ The worst model is then eliminated according to an elimination rule that
 is coherent with the calculated t-statistic and is defined as:
 
 \[e_R = \arg max_{i}\bigg(\sup_{j\in M}\frac{\bar{d_i,_j}}{\sqrt{\hat{var[\bar{d_i,_j}]}}}\bigg)\]
-\#\# Mincer-Zarnowitz Approach to Forecast Evaluation The
-Mincer-Zarnowitz approach to evaluating forecast accuracy is commonly
-used and can be useful when comparing the forecasts produced by Prophet
-and the ARIMA model. Mincer and Zarnowitz (1969) proposed an absolute
-measure to evaluate forecast accuracy that considers the distance
-between the actual and predicted values. To analyse the absolute errors
-produced by the forecasts, the observed values \(r_t\) are regressed
-against the predicted values \(\hat{r_t}\), i.e.
+
+\subsection{Mincer-Zarnowitz Approach to Forecast
+Evaluation}\label{mincer-zarnowitz-approach-to-forecast-evaluation}
+
+The Mincer-Zarnowitz approach to evaluating forecast accuracy is
+commonly used and can be useful when comparing the forecasts produced by
+Prophet and the ARIMA model. Mincer and Zarnowitz (1969) proposed an
+absolute measure to evaluate forecast accuracy that considers the
+distance between the actual and predicted values. To analyse the
+absolute errors produced by the forecasts, the observed values \(r_t\)
+are regressed against the predicted values \(\hat{r_t}\), i.e.
 \[r_t = \alpha + \beta\cdot\hat{r_t} + e_t\] where \(\alpha\) represents
 the mean distance between the observed and predicted values while
 \(\beta\) represents the correlation between the forecasted errors and
@@ -639,8 +642,8 @@ The original dataset is modified in order to examine how robust the
 ARIMA and Prophet model are when faced with missing values and outliers.
 20 values are randomly removed from the training set and 5 outliers are
 randomly inserted in place of existing values. Both models are then
-fitted to this âdirtyâ dataset and the forecasts are evaluated in
-the same way as the ``clean'' dataset.
+fitted to this ``dirty'' dataset and the forecasts are evaluated in the
+same way as the ``clean'' dataset.
 
 \section{\texorpdfstring{Results
 \label{Results}}{Results }}\label{results}
@@ -782,7 +785,7 @@ estimated at the 1 day and 1 month forecast horizon when the data is
 dirty. The intercept estimates are larger than the case of the clean
 data, suggesting that the biasness of the forecasts yielded by both
 models increases when there are outliers and missing values present in
-the data. Contrary to the results from the clean data, Prophetâs
+the data. Contrary to the results from the clean data, Prophet's
 intercept estimate lies closer to zero at the 1 month and 3 month
 forecast horizon. This indicates that the mean forecasted returns
 yielded by Prophet is closer to the mean observed returns when outliers
@@ -826,8 +829,8 @@ them to produce return forecasts that are as good as the ARIMA model,
 without having any expert knowledge about model building and selection.
 It would also provide them with the flexibility to customise the model
 to suit their needs and incorporate their domain knowledge about BTC/ZAR
-through the modelâs intuitively adjustable parameters. If the analyst
-is interested in generating unbiased and/or efficient forecasts with the
+through the model's intuitively adjustable parameters. If the analyst is
+interested in generating unbiased and/or efficient forecasts with the
 least amount of forecast error, they could utilise either model, however
 should only forecast BTC/ZAR returns over long forecast horizons with
 data that do not include any outliers or missing values.
@@ -849,9 +852,9 @@ at other forecast horizons, these results might change as more data and
 information about events which might impact the price of BTC/ZAR becomes
 available and is incorporated into the Prophet model. Furthermore, the
 RMSE shows that the difference between the forecast errors of ARIMA and
-Prophet is marginal, even in the case where both models donât have
-equal predictive accuracy. Hence, if the analyst is willing to sacrifice
-a small amount of predictive accuracy in return for the tractability and
+Prophet is marginal, even in the case where both models don't have equal
+predictive accuracy. Hence, if the analyst is willing to sacrifice a
+small amount of predictive accuracy in return for the tractability and
 ease of implementation which Prophet provides, then they might favour
 Prophet over the ARIMA model.
 
